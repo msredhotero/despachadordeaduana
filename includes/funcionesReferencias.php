@@ -367,6 +367,27 @@ return $res;
 }
 
 
+function traerExportacioncontenedoresPorExportacion($idExportaciones) {
+$sql = "select
+e.idexportacioncontenedor,
+e.refexportaciones,
+e.contenedor,
+e.tara,
+e.precinto
+from dbexportacioncontenedores e
+inner join dbexportaciones expo ON expo.idexportacion = e.refexportaciones
+inner join dbclientes cl ON cl.idcliente = expo.refclientes
+inner join tbbuques bu ON bu.idbuque = expo.refbuques
+inner join tbcolores co ON co.idcolor = expo.refcolores
+inner join tbdestinos de ON de.iddestino = expo.refdestinos
+inner join tbpuertos pu ON pu.idpuerto = expo.refpuertos
+where expo.idexportacion = ".$idExportaciones."
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
 function traerExportacioncontenedoresPorId($id) {
 $sql = "select idexportacioncontenedor,refexportaciones,contenedor,tara,precinto from dbexportacioncontenedores where idexportacioncontenedor =".$id;
 $res = $this->query($sql,0);
@@ -417,6 +438,27 @@ e.total
 from dbexportaciondetalles e
 inner join dbexportacioncontenedores exp ON exp.idexportacioncontenedor = e.refexportacioncontenedores
 inner join dbexportaciones ex ON ex.idexportacion = exp.refexportaciones
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerExportaciondetallesPorExportacionContenedor($idExportacion, $idContenedor) {
+$sql = "select
+e.idexportaciondetalle,
+e.refexportacioncontenedores,
+e.bulto,
+e.bruto,
+e.neto,
+e.marca,
+e.refmercaderias,
+e.total
+from dbexportaciondetalles e
+inner join dbexportacioncontenedores expo ON expo.idexportacioncontenedor = e.refexportacioncontenedores
+inner join dbexportaciones ex ON ex.idexportacion = expo.refexportaciones
+inner join tbmercaderias tm on tm.idmercaderia = e.refmercaderias
+where ex.idexportacion = ".$idexportacion." and expo.idexportacioncontenedor = ".$idContenedor."
 order by 1";
 $res = $this->query($sql,0);
 return $res;
@@ -516,6 +558,224 @@ function traerExportacionesGrid() {
 			$res = $this->query($sql,0);
 			return $res;
 }
+
+
+function traerExportacionesPorIdReporte($id) {
+	$sql = "select
+				e.idexportacion,
+				e.permisoembarque,
+				cli.razonsocial,
+				buq.nombre as buque,
+				des.destino,
+				pue.puerto,
+				colo.color,
+				e.booking,
+				e.fecha,
+				e.factura,
+				e.despachante,
+				e.cuit,
+				e.refclientes,
+				e.refbuques,
+				e.refcolores,
+				e.refdestinos,
+				e.refpuertos,
+				e.tc
+			from dbexportaciones e
+			inner join dbclientes cli ON cli.idcliente = e.refclientes
+			inner join tbbuques buq ON buq.idbuque = e.refbuques
+			inner join tbcolores colo ON colo.idcolor = e.refcolores
+			inner join tbdestinos des ON des.iddestino = e.refdestinos
+			inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
+			where e.idexportacion = ".$id."
+			order by 1";
+			$res = $this->query($sql,0);
+			return $res;
+}
+
+function rptExportacionesDiarias($fecha) {
+	$sql = "select
+				t.idexportacion,
+				t.permisoembarque,
+				t.razonsocial,
+				t.buque,
+				t.destino,
+				t.puerto,
+				t.color,
+				t.booking,
+				t.fecha,
+				t.factura,
+				t.despachante,
+				t.cuit,
+				t.refclientes,
+				t.refbuques,
+				t.refcolores,
+				t.refdestinos,
+				t.refpuertos,
+				t.tc,
+				sum(t.tara) as tara,
+				sum(t.bulto) as bulto,
+				sum(t.bruto) as bruto,
+				sum(t.neto) as neto
+				from	(
+						select
+								e.idexportacion,
+								e.permisoembarque,
+								cli.razonsocial,
+								buq.nombre as buque,
+								des.destino,
+								pue.puerto,
+								colo.color,
+								e.booking,
+								e.fecha,
+								e.factura,
+								e.despachante,
+								e.cuit,
+								e.refclientes,
+								e.refbuques,
+								e.refcolores,
+								e.refdestinos,
+								e.refpuertos,
+								e.tc,
+				                ec.tara,
+				                sum(ed.bulto) as bulto,
+				                sum(ed.bruto) as bruto,
+				                sum(ed.neto) as neto
+							from dbexportaciones e
+				            inner join dbexportacioncontenedores ec ON e.idexportacion = ec.refexportaciones
+				            inner join dbexportaciondetalles ed ON ed.refexportacioncontenedores = ec.idexportacioncontenedor
+							inner join dbclientes cli ON cli.idcliente = e.refclientes
+							inner join tbbuques buq ON buq.idbuque = e.refbuques
+							inner join tbcolores colo ON colo.idcolor = e.refcolores
+							inner join tbdestinos des ON des.iddestino = e.refdestinos
+							inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
+				            where e.fecha = '".$fecha."'
+				            group by e.idexportacion,e.permisoembarque,
+								cli.razonsocial,buq.nombre,
+								des.destino,pue.puerto,
+								colo.color,	e.booking,
+								e.fecha,e.factura,
+								e.despachante,e.cuit,
+								e.refclientes,e.refbuques,
+								e.refcolores,e.refdestinos,
+								e.refpuertos,e.tc,
+				                ec.tara
+							) as t
+				            group by t.idexportacion,
+				t.permisoembarque,
+				t.razonsocial,
+				t.buque,
+				t.destino,
+				t.puerto,
+				t.color,
+				t.booking,
+				t.fecha,
+				t.factura,
+				t.despachante,
+				t.cuit,
+				t.refclientes,
+				t.refbuques,
+				t.refcolores,
+				t.refdestinos,
+				t.refpuertos,
+				t.tc 
+				order by t.fecha";
+	
+	$res = $this->query($sql,0);
+	return $res;
+} 
+
+
+function rptExportacionesMensual($anio,$mes) {
+	$sql = "select
+				t.idexportacion,
+				t.permisoembarque,
+				t.razonsocial,
+				t.buque,
+				t.destino,
+				t.puerto,
+				t.color,
+				t.booking,
+				t.fecha,
+				t.factura,
+				t.despachante,
+				t.cuit,
+				t.refclientes,
+				t.refbuques,
+				t.refcolores,
+				t.refdestinos,
+				t.refpuertos,
+				t.tc,
+				sum(t.tara) as tara,
+				sum(t.bulto) as bulto,
+				sum(t.bruto) as bruto,
+				sum(t.neto) as neto
+				from	(
+						select
+								e.idexportacion,
+								e.permisoembarque,
+								cli.razonsocial,
+								buq.nombre as buque,
+								des.destino,
+								pue.puerto,
+								colo.color,
+								e.booking,
+								e.fecha,
+								e.factura,
+								e.despachante,
+								e.cuit,
+								e.refclientes,
+								e.refbuques,
+								e.refcolores,
+								e.refdestinos,
+								e.refpuertos,
+								e.tc,
+				                ec.tara,
+				                sum(ed.bulto) as bulto,
+				                sum(ed.bruto) as bruto,
+				                sum(ed.neto) as neto
+							from dbexportaciones e
+				            inner join dbexportacioncontenedores ec ON e.idexportacion = ec.refexportaciones
+				            inner join dbexportaciondetalles ed ON ed.refexportacioncontenedores = ec.idexportacioncontenedor
+							inner join dbclientes cli ON cli.idcliente = e.refclientes
+							inner join tbbuques buq ON buq.idbuque = e.refbuques
+							inner join tbcolores colo ON colo.idcolor = e.refcolores
+							inner join tbdestinos des ON des.iddestino = e.refdestinos
+							inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
+				            where year(e.fecha) = ".$anio." and month(e.fecha) = ".$mes."
+				            group by e.idexportacion,e.permisoembarque,
+								cli.razonsocial,buq.nombre,
+								des.destino,pue.puerto,
+								colo.color,	e.booking,
+								e.fecha,e.factura,
+								e.despachante,e.cuit,
+								e.refclientes,e.refbuques,
+								e.refcolores,e.refdestinos,
+								e.refpuertos,e.tc,
+				                ec.tara
+							) as t
+				            group by t.idexportacion,
+				t.permisoembarque,
+				t.razonsocial,
+				t.buque,
+				t.destino,
+				t.puerto,
+				t.color,
+				t.booking,
+				t.fecha,
+				t.factura,
+				t.despachante,
+				t.cuit,
+				t.refclientes,
+				t.refbuques,
+				t.refcolores,
+				t.refdestinos,
+				t.refpuertos,
+				t.tc
+				order by t.fecha";
+	
+	$res = $this->query($sql,0);
+	return $res;
+} 
 
 
 function traerExportacionesPorId($id) {

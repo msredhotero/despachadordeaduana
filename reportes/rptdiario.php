@@ -21,7 +21,6 @@ require('fpdf.php');
 
 $fechaPost		= 	$_GET['fecha'];
 
-$resEmpresa		= $serviciosReferancias->traerConfiguracionUltima();
 
 if (mysql_num_rows($resEmpresa)>0) {
 	$empresa = mysql_result($resEmpresa,0,'empresa');	
