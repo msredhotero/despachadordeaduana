@@ -22,24 +22,24 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Album",$_SESSION['refroll_predio'],$_SESSION['sede']);
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Puertos",$_SESSION['refroll_predio'],'');
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Album";
+$singular = "Puerto";
 
-$plural = "Album";
+$plural = "Puertos";
 
-$eliminar = "eliminarAlbum";
+$eliminar = "eliminarPuertos";
 
-$insertar = "insertarAlbum";
+$insertar = "insertarPuertos";
 
-$tituloWeb = "Gestión: Teatro Ciego";
+$tituloWeb = "Gestión: Despachador de Aduana";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "tbalbum";
+$tabla 			= "tbpuertos";
 
 $lblCambio	 	= array();
 $lblreemplazo	= array();
@@ -55,9 +55,8 @@ $refCampo 	=  array();
 
 
 /////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
-$cabeceras 		= "	<th>Banda</th>
-					<th>Album</th>
-					<th>Genero</th>";
+$cabeceras 		= "	<th>Puertos</th>
+					<th>Bandera</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -66,7 +65,7 @@ $cabeceras 		= "	<th>Banda</th>
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerAlbum(),3);
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerPuertos(),2);
 
 
 

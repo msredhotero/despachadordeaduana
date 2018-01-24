@@ -22,31 +22,31 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Album",$_SESSION['refroll_predio'],$_SESSION['sede']);
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Puertos",$_SESSION['refroll_predio'],'');
 
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerAlbumPorId($id);
+$resResultado = $serviciosReferencias->traerPuertosPorId($id);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Album";
+$singular = "Puerto";
 
-$plural = "Album";
+$plural = "Puertos";
 
-$eliminar = "eliminarAlbum";
+$eliminar = "eliminarPuertos";
 
-$modificar = "modificarAlbum";
+$modificar = "modificarPuertos";
 
-$idTabla = "idalbum";
+$idTabla = "idpuerto";
 
-$tituloWeb = "Gestión: Teatro Ciego";
+$tituloWeb = "Gestión: Despachador de Aduana";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "tbalbum";
+$tabla 			= "tbpuertos";
 
 $lblCambio	 	= array();
 $lblreemplazo	= array();

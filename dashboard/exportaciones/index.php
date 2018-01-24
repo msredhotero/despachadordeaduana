@@ -22,42 +22,64 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Album",$_SESSION['refroll_predio'],$_SESSION['sede']);
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Exportaciones",$_SESSION['refroll_predio'],'');
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Album";
+$singular = "Exportacion";
 
-$plural = "Album";
+$plural = "Exportaciones";
 
-$eliminar = "eliminarAlbum";
+$eliminar = "eliminarExportaciones";
 
-$insertar = "insertarAlbum";
+$insertar = "insertarExportaciones";
 
-$tituloWeb = "Gestión: Teatro Ciego";
+$tituloWeb = "Gestión: Despachante de Aduana";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "tbalbum";
+$tabla 			= "dbexportaciones";
 
-$lblCambio	 	= array();
-$lblreemplazo	= array();
+$lblCambio	 	= array("refclientes","refbuques","refpuertos","refdestinos","refcolores",'permisoembarque');
+$lblreemplazo	= array("Clientes","Buques","Puertos","Destinos","Colores",'Permiso de Embarque');
 
 
-$cadRef 	= '';
+$resClientes 	= $serviciosReferencias->traerClientes();
+$cadRef 	= $serviciosFunciones->devolverSelectBox($resClientes,array(1),'');
 
-$refdescripcion = array();
-$refCampo 	=  array();
+$resBuques 	= $serviciosReferencias->traerBuques();
+$cadRef2 	= $serviciosFunciones->devolverSelectBox($resBuques,array(1),'');
+
+$resPuertos 	= $serviciosReferencias->traerPuertos();
+$cadRef3 	= $serviciosFunciones->devolverSelectBox($resPuertos,array(1),'');
+
+
+$resDestinos 	= $serviciosReferencias->traerDestinos();
+$cadRef5 	= $serviciosFunciones->devolverSelectBox($resDestinos,array(1),'');
+
+
+$resColores 	= $serviciosReferencias->traerColores();
+$cadRef6 	= $serviciosFunciones->devolverSelectBox($resColores,array(1),'');
+
+//die(var_dump($cadRef3));
+$refdescripcion = array(0 => $cadRef,1 => $cadRef2,2 => $cadRef3,3 => $cadRef5,4 => $cadRef6);
+$refCampo 	=  array("refclientes","refbuques","refpuertos","refdestinos","refcolores");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
 
 
 /////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
-$cabeceras 		= "	<th>Banda</th>
-					<th>Album</th>
-					<th>Genero</th>";
+$cabeceras 		= "	<th>Permiso Emb.</th>
+					<th>Clientes</th>
+					<th>Buques</th>
+					<th>Puertos</th>
+					<th>Destinos</th>
+					<th>Colores</th>
+					<th>Booking</th>
+					<th>Fecha</th>
+					<th>Fact.</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -66,7 +88,7 @@ $cabeceras 		= "	<th>Banda</th>
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerAlbum(),3);
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerExportacionesGrid(),9);
 
 
 
@@ -124,72 +146,11 @@ if ($_SESSION['refroll_predio'] != 1) {
       });
     </script>
     
-    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzxyoH5wuPmahQIZLUBjPfDuu_cUHUBQY"
-  type="text/javascript"></script>
-    <style type="text/css">
-		#map
-		{
-			width: 100%;
-			height: 600px;
-			border: 1px solid #d0d0d0;
-		}
-  
-		
-	</style>
-    <script>
-	/* AIzaSyBzxyoH5wuPmahQIZLUBjPfDuu_cUHUBQY */
-		var map;
-		var markers = [];
-	 function localize() {
-
-			
-		var mapDiv = document.getElementById('map');
-		var laPlata= {lat: -34.9205283, lng: -57.9531703};
-		var map = new google.maps.Map(mapDiv, {
-			zoom: 13,
-			center: new google.maps.LatLng(-34.9205283, -57.9531703)
-		});
-		
-		//var latitud = map.coords.latitude;
-		//var longitud = map.coords.longitude;
-		/*
-		google.maps.event.addDomListener(mapDiv, 'click', function(e) {
-			window.alert('click en el mapa');
-		});
-		*/
-		map.addListener('click', function(e) {
-			
-			if (markers.length > 0) {
-				clearMarkers();
-			}
-			$('#latitud').val(e.latLng.lat());
-			$('#longitud').val(e.latLng.lng());	
-			placeMarkerAndPanTo(e.latLng, map);
-		});
-	 }
-	 
-		function placeMarkerAndPanTo(latLng, map) {
-			var marker = new google.maps.Marker({
-				position: latLng,
-				map: map
-			});
-			markers.push(marker);
-			map.panTo(latLng);
-			
-		}
-	
-	function clearMarkers() {
-		for (var i = 0; i < markers.length; i++) {
-			markers[i].setMap(null);
-		}
-	}
-		
-
- </script>-->
+   
  
 </head>
 
-<body onLoad="localize()">
+<body>
 
  <?php echo $resMenu; ?>
 
@@ -206,13 +167,22 @@ if ($_SESSION['refroll_predio'] != 1) {
         	<form class="form-inline formulario" role="form">
         	<div class="row">
 			<?php echo $formulario; ?>
-            </div>
-            <!--
-            <div class="row">
-            	<div id="map" ></div>
+				<br>
+				<div class="col-md-12" style="margin-top:25px;" id="lstContenedores">
+					
+					<ul class="list-inline" style=" color:#5cb85c;border-bottom:2px solid #5cb85c; padding-bottom:15px;">
+						<li style="font-size:18px; border-left:2px solid #F00;">Pulse agregar para cargar un contenedor</li>
+						<li><input type="button" class="btn btn-success agregarContenedor" value="Agregar"></li>
+					</ul>
 
+					<div id="contenedorData" class="col-md-12" style="margin-top:25px;">
+
+						
+						
+					</div>
+				</div>
             </div>
-            -->
+
             <div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
                 
@@ -271,9 +241,11 @@ if ($_SESSION['refroll_predio'] != 1) {
 <script src="../../js/bootstrap-datetimepicker.es.js"></script>
 
 <script type="text/javascript">
+var idContenedor = 1;
 $(document).ready(function(){
 	
-	$('#activo').prop('checked', true);
+
+	$('#colapsarMenu').click();
 	
 	
 	var table = $('#example').dataTable({
@@ -309,6 +281,35 @@ $(document).ready(function(){
 			$(location).attr('href',url);
       });
 	
+	$("#lstContenedores").on("click",'.agregarContenedor', function(){
+		$('#contenedorData').append('<div id="idC' + idContenedor + '"> \
+						<div class="form-group col-md-4 col-xs-4" style="display:block"> \
+							<label for="factura" class="control-label" style="text-align:left">Contenedor</label> \
+							<div class="input-group col-md-12 col-xs-12"> \
+								<input type="text" class="form-control datacontenedor" id="contenedor' + idContenedor + '" name="contenedor' + idContenedor + '" placeholder="Ingrese el Contenedor..." required=""> \
+							</div> \
+						</div> \
+						<div class="form-group col-md-2 col-xs-4" style="display:block"> \
+							<label for="factura" class="control-label" style="text-align:left">Tara</label> \
+							<div class="input-group col-md-12 col-xs-12"> \
+								<input type="number" min="1" max="9999" class="form-control datatara" id="tara' + idContenedor + '" name="tara' + idContenedor + '" placeholder="Ingrese la Tara..." required=""> \
+							</div> \
+						</div> \
+						<div class="form-group col-md-3 col-xs-4" style="display:block"> \
+							<label for="factura" class="control-label" style="text-align:left">Precinto</label> \
+							<div class="input-group col-md-12 col-xs-12"> \
+								<input type="text" class="form-control datapreciento" id="precinto' + idContenedor + '" name="precinto' + idContenedor + '" placeholder="Ingrese el Precinto..." required=""> \
+							</div> \
+						</div> \
+						<div class="form-group col-md-2 col-xs-4" style="display:block"> \
+							<label for="factura" class="control-label" style="text-align:left">Acciones</label> \
+							<div class="input-group col-md-12 col-xs-12"> \
+								<input type="button" class="btn btn-danger eliminarContenedor" id="' + idContenedor + '" value="Eliminar"> \
+								<input type="button" class="btn btn-success agregarMercaderia" id="' + idContenedor + '" value="Agregar Mercaderia"> \
+							</div> \
+						</div></div>');
+		idContenedor += 1;
+	});
 
 	$("#example").on("click",'.varborrar', function(){
 		  usersid =  $(this).attr("id");
@@ -319,6 +320,18 @@ $(document).ready(function(){
 			
 			//url = "../clienteseleccionado/index.php?idcliente=" + usersid;
 			//$(location).attr('href',url);
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton eliminar
+
+
+	$("#lstContenedores").on("click",'.eliminarContenedor', function(){
+
+		  usersid =  $(this).attr("id");
+		  if (!isNaN(usersid)) {
+			$("#idC"+usersid).remove();
+
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	
 		  }

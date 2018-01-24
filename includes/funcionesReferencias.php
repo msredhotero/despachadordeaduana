@@ -488,6 +488,36 @@ $res = $this->query($sql,0);
 return $res;
 }
 
+function traerExportacionesGrid() {
+	$sql = "select
+				e.idexportacion,
+				e.permisoembarque,
+				cli.razonsocial,
+				buq.nombre as buque,
+				des.destino,
+				pue.puerto,
+				colo.color,
+				e.booking,
+				e.fecha,
+				e.factura,
+				e.despachante,
+				e.cuit,
+				e.refclientes,
+				e.refbuques,
+				e.refcolores,
+				e.refdestinos,
+				e.refpuertos
+			from dbexportaciones e
+			inner join dbclientes cli ON cli.idcliente = e.refclientes
+			inner join tbbuques buq ON buq.idbuque = e.refbuques
+			inner join tbcolores colo ON colo.idcolor = e.refcolores
+			inner join tbdestinos des ON des.iddestino = e.refdestinos
+			inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
+			order by 1";
+			$res = $this->query($sql,0);
+			return $res;
+}
+
 
 function traerExportacionesPorId($id) {
 $sql = "select idexportacion,refclientes,refbuques,refcolores,refdestinos,refpuertos,permisoembarque,booking,despachante,cuit,fecha,factura from dbexportaciones where idexportacion =".$id;

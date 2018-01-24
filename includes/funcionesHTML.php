@@ -76,7 +76,7 @@ function menu($usuario,$titulo,$rol,$empresa) {
 	
 		<div id="navigation" >
 			<div align="center">
-			<img src="../imagenes/dash_logo.png"/ style="padding-bottom:5%;">
+			<img src="../imagenes/dash_logo.png" width="70%" style="padding-bottom:5%;">
 			</div>
 				<nav class="nav">
 					<ul>
