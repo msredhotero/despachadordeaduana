@@ -46,7 +46,34 @@ class Servicios {
 		}
 		return $cad;
 	}
+
+	function devolverSelectBoxObligatorio($datos, $ar, $delimitador) {
+		
+		$cad		= ''; 
+		while ($rowTT = mysql_fetch_array($datos)) {
+			$contenido	= '';
+			
+			foreach ($ar as $i) {
+				$contenido .= $rowTT[$i].$delimitador;
+			}
+			$cad .= '<option value="'.$rowTT[0].'">'.utf8_encode(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
+		}
+		return $cad;
+	}
 	
+	function devolverSelectBoxObligatorioJavascript($datos, $ar, $delimitador) {
+		
+		$cad		= ''; 
+		while ($rowTT = mysql_fetch_array($datos)) {
+			$contenido	= '';
+			
+			foreach ($ar as $i) {
+				$contenido .= $rowTT[$i].$delimitador;
+			}
+			$cad .= '<option value="'.$rowTT[0].'">'.utf8_encode(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
+		}
+		return $cad;
+	}
 	function devolverSelectBoxActivo($datos, $ar, $delimitador, $idSelect) {
 		
 		$cad		= ''; 

@@ -90,7 +90,10 @@ $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lb
 
 $lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerExportacionesGrid(),9);
 
+$resMercaderias = $serviciosReferencias->traerMercaderias();
+$cadMercaderia 	= $serviciosFunciones->devolverSelectBoxObligatorio($resMercaderias,array(1),'');
 
+//die(var_dump($cadMercaderia2));
 
 if ($_SESSION['refroll_predio'] != 1) {
 
@@ -122,6 +125,7 @@ if ($_SESSION['refroll_predio'] != 1) {
 
     
     <script type="text/javascript" src="../../js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery.number.min.js"></script>
     <link rel="stylesheet" href="../../css/jquery-ui.css">
 
     <script src="../../js/jquery-ui.js"></script>
@@ -143,6 +147,8 @@ if ($_SESSION['refroll_predio'] != 1) {
       jQuery(document).ready(function ($) {
         "use strict";
         $('#navigation').perfectScrollbar();
+
+        
       });
     </script>
     
@@ -202,6 +208,8 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </ul>
                 </div>
             </div>
+            <input type="hidden" id="tokenContenedor" name="tokenContenedor" value="0">
+            <input type="hidden" id="tokenItem" name="tokenItem" value="0">
             </form>
     	</div>
     </div>
@@ -242,10 +250,12 @@ if ($_SESSION['refroll_predio'] != 1) {
 
 <script type="text/javascript">
 var idContenedor = 1;
+var idItems = 1;
 $(document).ready(function(){
 	
 
 	$('#colapsarMenu').click();
+
 	
 	
 	var table = $('#example').dataTable({
@@ -282,17 +292,17 @@ $(document).ready(function(){
       });
 	
 	$("#lstContenedores").on("click",'.agregarContenedor', function(){
-		$('#contenedorData').append('<div id="idC' + idContenedor + '"> \
+		$('#contenedorData').append('<div class="row" id="idC' + idContenedor + '" style="padding-bottom:10px; border-bottom:5px dashed #FF5733;"> \
 						<div class="form-group col-md-4 col-xs-4" style="display:block"> \
 							<label for="factura" class="control-label" style="text-align:left">Contenedor</label> \
 							<div class="input-group col-md-12 col-xs-12"> \
 								<input type="text" class="form-control datacontenedor" id="contenedor' + idContenedor + '" name="contenedor' + idContenedor + '" placeholder="Ingrese el Contenedor..." required=""> \
 							</div> \
 						</div> \
-						<div class="form-group col-md-2 col-xs-4" style="display:block"> \
+						<div class="form-group col-md-3 col-xs-4" style="display:block"> \
 							<label for="factura" class="control-label" style="text-align:left">Tara</label> \
 							<div class="input-group col-md-12 col-xs-12"> \
-								<input type="number" min="1" max="9999" class="form-control datatara" id="tara' + idContenedor + '" name="tara' + idContenedor + '" placeholder="Ingrese la Tara..." required=""> \
+								<input type="text" class="form-control datatara" id="tara' + idContenedor + '" name="tara' + idContenedor + '" placeholder="Ingrese la Tara..." required=""> \
 							</div> \
 						</div> \
 						<div class="form-group col-md-3 col-xs-4" style="display:block"> \
@@ -307,9 +317,102 @@ $(document).ready(function(){
 								<input type="button" class="btn btn-danger eliminarContenedor" id="' + idContenedor + '" value="Eliminar"> \
 								<input type="button" class="btn btn-success agregarMercaderia" id="' + idContenedor + '" value="Agregar Mercaderia"> \
 							</div> \
-						</div></div>');
+						</div> \
+						<div id="idI' + idContenedor + '"> \
+						</div> \
+						</div>');
+		$('#tokenContenedor').val(idContenedor);
 		idContenedor += 1;
+
+		$('.datatara').each(function(intIndex){
+			$(this).number( true, 2, '.','' );
+			$(this).change( function() {
+				if ($(this).val() < 0) {
+					$(this).val(0);
+				}
+			});
+		});
 	});
+
+	$(document).on("click",'.agregarMercaderia', function(){
+		usersid =  $(this).attr("id");
+
+		agregarItem(usersid, 'idI' + usersid);
+		$('#tokenItem').val(idItems);
+		idItems += 1;
+
+		$('.databulto').each(function(intIndex){
+			$(this).number( true, 0,'','');
+			$(this).change( function() {
+				if ($(this).val() < 0) {
+					$(this).val(0);
+				}
+			});
+		});
+
+		$('.databruto').each(function(intIndex){
+			$(this).number( true, 2, '.','' );
+			$(this).change( function() {
+				if ($(this).val() < 0) {
+					$(this).val(0);
+				}
+			});
+		});
+
+		$('.dataneto').each(function(intIndex){
+			$(this).number( true, 2, '.','' );
+			$(this).change( function() {
+				if ($(this).val() < 0) {
+					$(this).val(0);
+				}
+			});
+		});
+	});
+
+	function agregarItem(id, contenedor) {
+		$('#'+contenedor).append('<div class="row" style="margin-left:15px;" id="contenedorItems' + idItems + '"> \
+						<div class="form-group col-md-1 col-xs-3" style="display:block"> \
+							<label for="factura" class="control-label" style="text-align:left">Bulto</label> \
+							<div class="input-group col-md-12 col-xs-12"> \
+								<input type="text" class="form-control databulto" id="bulto' + id + idItems + '" name="bulto' + id + idItems + '" required=""> \
+							</div> \
+						</div> \
+						<div class="form-group col-md-2 col-xs-3" style="display:block"> \
+							<label for="factura" class="control-label" style="text-align:left">Bruto</label> \
+							<div class="input-group col-md-12 col-xs-12"> \
+								<input type="text" class="form-control databruto" id="bruto' + id + idItems + '" name="bruto' + id + idItems + '" required=""> \
+							</div> \
+						</div> \
+						<div class="form-group col-md-2 col-xs-3" style="display:block"> \
+							<label for="factura" class="control-label" style="text-align:left">Neto</label> \
+							<div class="input-group col-md-12 col-xs-12"> \
+								<input type="text" class="form-control dataneto" id="neto' + id + idItems + '" name="neto' + id + idItems + '" required=""> \
+							</div> \
+						</div> \
+						<div class="form-group col-md-2 col-xs-3" style="display:block"> \
+							<label for="factura" class="control-label" style="text-align:left">Marca</label> \
+							<div class="input-group col-md-12 col-xs-12"> \
+								<input type="text" class="form-control datamarca" id="marca' + id + idItems + '" name="marca' + id + idItems + '" required=""> \
+							</div> \
+						</div> \
+						<div class="form-group col-md-3 col-xs-3" style="display:block"> \
+							<label for="factura" class="control-label" style="text-align:left">Mercaderia</label> \
+							<div class="input-group col-md-12 col-xs-12"> \
+								<select class="form-control datamercaderia" id="refmercaderias' + id + idItems + '" name="refmercaderias' + id + idItems + '"> \
+								<?php echo $cadMercaderia; ?> \
+								</select> \
+							</div> \
+						</div> \
+						<div class="form-group col-md-2 col-xs-4" style="display:block"> \
+							<label for="factura" class="control-label" style="text-align:left">Acciones</label> \
+							<div class="input-group col-md-12 col-xs-12"> \
+								<input type="button" class="btn btn-danger eliminarItem" id="' + idItems + '" value="X"> \
+							</div> \
+						</div></div>');
+		
+	}
+
+
 
 	$("#example").on("click",'.varborrar', function(){
 		  usersid =  $(this).attr("id");
@@ -331,6 +434,17 @@ $(document).ready(function(){
 		  usersid =  $(this).attr("id");
 		  if (!isNaN(usersid)) {
 			$("#idC"+usersid).remove();
+
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton eliminar
+
+	$("#lstContenedores").on("click",'.eliminarItem', function(){
+
+		  usersid =  $(this).attr("id");
+		  if (!isNaN(usersid)) {
+			$("#contenedorItems"+usersid).remove();
 
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	

@@ -23,12 +23,9 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reportes",$_SESSION['refroll_predio'],$_SESSION['sede']);
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reportes",$_SESSION['refroll_predio'],'');
 
 
-$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFunciones(),array(3,4,5),' - ');
-
-$lstObras = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerObras(),array(1),'');
 
 ?>
 
@@ -43,7 +40,7 @@ $lstObras = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traer
 
 
 
-<title>Gesti&oacute;n: Teatro Ciego</title>
+<title>Gesti&oacute;n: Despachante de Aduana</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
@@ -104,16 +101,6 @@ $lstObras = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traer
                     </div>
                 </div>
                 
-                <div class="form-group col-md-6" style="display:block">
-                    <label class="control-label" for="codigobarra" style="text-align:left">Función <span style="color:#F00;">*</span></label>
-                    <div class="input-group col-md-12">
-                        <select data-placeholder="selecione la Función..." id="reffunciones" name="reffunciones" class="form-control" tabindex="2">
-                            
-                            <?php echo $lstFunciones; ?>
-                        </select>
-                    </div>
-                </div>
-                
                 
                 <div class="form-group col-md-6">
                     <label class="control-label" style="text-align:left" for="refcliente">Acción</label>
@@ -156,22 +143,12 @@ $lstObras = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traer
         	<form class="form-inline formulario" role="form">
         	<div class="row">
             	<div class="form-group col-md-4 col-xs-6" style="display:'.$lblOculta.'">
-                    <label for="fecha1" class="control-label" style="text-align:left">Seleccione la fecha</label>
+                    <label for="fecha1" class="control-label" style="text-align:left">Seleccione el Mes</label>
                     <div class="input-group col-md-6 col-xs-12">
                     <input class="form-control" type="text" name="fecha2" id="fecha2" value="Date"/>
                     </div>
                 </div>
-                
-                <div class="form-group col-md-6" style="display:block">
-                    <label class="control-label" for="codigobarra" style="text-align:left">Obra <span style="color:#F00;">*</span></label>
-                    <div class="input-group col-md-12">
-                        <select data-placeholder="selecione la Función..." id="refobras" name="refobras" class="form-control" tabindex="2">
-                            
-                            <?php echo $lstObras; ?>
-                        </select>
-                    </div>
-                </div>
-                
+
                 
                 <div class="form-group col-md-6">
                     <label class="control-label" style="text-align:left" for="refcliente">Acción</label>
@@ -204,203 +181,7 @@ $lstObras = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traer
     	</div>
     </div>
     
-    
-    
-    <div class="boxInfoLargo tile-stats stat-til tile-white">
-        <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Planilla de Aportes</p>
-        	
-        </div>
-    	<div class="cuerpoBox">
-        	<form class="form-inline formulario" role="form">
-        	<div class="row">
-            	<div class="form-group col-md-3 col-xs-6" style="display:'.$lblOculta.'">
-                    <label for="fecha1" class="control-label" style="text-align:left">Seleccione la fecha desde</label>
-                    <div class="input-group col-md-12 col-xs-12">
-                    <input class="form-control" type="text" name="fecha3" id="fecha3" value="Date"/>
-                    </div>
-                </div>
-                
-                <div class="form-group col-md-3 col-xs-6" style="display:'.$lblOculta.'">
-                    <label for="fecha1" class="control-label" style="text-align:left">Seleccione la fecha hasta</label>
-                    <div class="input-group col-md-12 col-xs-12">
-                    <input class="form-control" type="text" name="fecha4" id="fecha4" value="Date"/>
-                    </div>
-                </div>
-                
-                <div class="form-group col-md-6" style="display:block">
-                    <label class="control-label" for="codigobarra" style="text-align:left">Obra <span style="color:#F00;">*</span></label>
-                    <div class="input-group col-md-12">
-                        <select data-placeholder="selecione la Función..." id="refobras2" name="refobras2" class="form-control" tabindex="2">
-                            
-                            <?php echo $lstObras; ?>
-                        </select>
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-6">
-                    <label class="control-label" style="text-align:left" for="refcliente">Acción</label>
 
-                    	<ul class="list-inline">
-                        	<li>
-                    			<button type="button" class="btn btn-success" id="rptPlanillaAportes" style="margin-left:0px;">Generar</button>
-                            </li>
-                            <!--<li>
-                        		<button type="button" class="btn btn-default" id="rptCJExcel" style="margin-left:0px;">Generar Excel</button>
-                            </li>-->
-                        </ul>
-
-                </div>
-                
-
-            </div>
-            
-            
-            <div class='row' style="margin-left:25px; margin-right:25px;">
-                <div class='alert'>
-                
-                </div>
-                <div id='load'>
-                
-                </div>
-            </div>
-
-            </form>
-    	</div>
-    </div>
-    
-    
-    <div class="boxInfoLargo tile-stats stat-til tile-white">
-        <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Argentores</p>
-        	
-        </div>
-    	<div class="cuerpoBox">
-        	<form class="form-inline formulario" role="form">
-        	<div class="row">
-            	<div class="form-group col-md-3 col-xs-6" style="display:fechas">
-                    <label for="fecha1" class="control-label" style="text-align:left">Seleccione la fecha</label>
-                    <div class="input-group col-md-12 col-xs-12">
-                    <input class="form-control" type="text" name="fecha5" id="fecha5" value="Date"/>
-                    </div>
-                </div>
-                
-               <div class="form-group col-md-6" style="display:block">
-                    <label class="control-label" for="codigobarra" style="text-align:left">Obra <span style="color:#F00;">*</span></label>
-                    <div class="input-group col-md-12">
-                        <select data-placeholder="selecione la Función..." id="refobras3" name="refobras3" class="form-control" tabindex="2">
-                            
-                            <?php echo $lstObras; ?>
-                        </select>
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                    <label class="control-label" style="text-align:left" for="refcliente">Acción</label>
-
-                    	<ul class="list-inline">
-                        	<li>
-                    			<button type="button" class="btn btn-info" id="buscarargentores" style="margin-left:0px;">Buscar</button>
-                            </li>
-                            <!--<li>
-                        		<button type="button" class="btn btn-default" id="rptCJExcel" style="margin-left:0px;">Generar Excel</button>
-                            </li>-->
-                        </ul>
-
-                </div>
-                
-                <div class="form-group col-md-3">
-                	<label for="fecha1" class="control-label" style="text-align:left">Valor Entrada</label>
-                    <div class="input-group col-md-12 col-xs-12">
-                    <input class="form-control" type="text" name="valorentrada" id="valorentrada" value="0" readonly/>
-                    </div>
-                
-                </div>
-                
-                <div class="form-group col-md-3">
-                	<label for="fecha1" class="control-label" style="text-align:left">Total Recaudado</label>
-                    <div class="input-group col-md-12 col-xs-12">
-                    <input class="form-control" type="text" name="totalrecaudado" id="totalrecaudado" value="0" readonly/>
-                    </div>
-                
-                </div>
-                
-                <div class="form-group col-md-3">
-                	<label for="fecha1" class="control-label" style="text-align:left">Argentores</label>
-                    <div class="input-group col-md-12 col-xs-12">
-                    <input class="form-control" type="text" name="argentores" id="argentores" value="0" readonly/>
-                    </div>
-                
-                </div>
-           </div>
-           <div class="row">     
-                <div class="form-group col-md-3">
-                	<label for="fecha1" class="control-label" style="text-align:left">Entradas Full</label>
-                    <div class="input-group col-md-12 col-xs-12">
-                    <input class="form-control" type="text" name="efull" id="efull" value="0"/>
-                    </div>
-                
-                </div>
-                
-                <div class="form-group col-md-3">
-                	<label for="fecha1" class="control-label" style="text-align:left">Entradas 50%</label>
-                    <div class="input-group col-md-12 col-xs-12">
-                    <input class="form-control" type="text" name="e50" id="e50" value="0"/>
-                    </div>
-                
-                </div>
-                
-                <div class="form-group col-md-3">
-                	<label for="fecha1" class="control-label" style="text-align:left">Entradas Cartelera</label>
-                    <div class="input-group col-md-12 col-xs-12">
-                    <input class="form-control" type="text" name="ecartelera" id="ecartelera" value="0"/>
-                    </div>
-                
-                </div>
-                
-                <div class="form-group col-md-3">
-                	<label for="fecha1" class="control-label" style="text-align:left">Entradas Invitados</label>
-                    <div class="input-group col-md-12 col-xs-12">
-                    <input class="form-control" type="text" name="einvitados" id="einvitados" value="0"/>
-                    </div>
-                
-                </div>
-                
-			</div>
-            
-            <div class="form-group col-md-6">
-                    <label class="control-label" style="text-align:left" for="refcliente">Acción</label>
-
-                        <ul class="list-inline">
-                            <li>
-                                <button type="button" class="btn btn-success" id="rptArgentores" style="margin-left:0px;">Generar</button>
-                            </li>
-                            <!--<li>
-                                <button type="button" class="btn btn-default" id="rptCJExcel" style="margin-left:0px;">Generar Excel</button>
-                            </li>-->
-                        </ul>
-
-                </div>
-            
-            <div class='row' style="margin-left:25px; margin-right:25px;">
-                <div class='alert'>
-                
-                </div>
-                <div id='load'>
-                
-                </div>
-            </div>
-
-            </form>
-    	</div>
-    </div>
-    
-    
-    
-
-    
     
    
 </div>
@@ -620,7 +401,7 @@ $('.form_date').datetimepicker({
     $( "#fecha1" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
 	
 	$( "#fecha2" ).datepicker();
-    $( "#fecha2" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+    $( "#fecha2" ).datepicker( "option", "dateFormat", "yy-mm" );
 	
 	$( "#fecha3" ).datepicker();
     $( "#fecha3" ).datepicker( "option", "dateFormat", "yy-mm-dd" );

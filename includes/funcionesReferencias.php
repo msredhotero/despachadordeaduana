@@ -379,18 +379,18 @@ return $res;
 
 /* PARA Exportaciondetalles */
 
-function insertarExportaciondetalles($refexportacioncontenedores,$contenedor,$tara,$precinto,$bulto,$bruto,$neto,$marca,$refmercaderias,$total) {
-$sql = "insert into dbexportaciondetalles(idexportaciondetalle,refexportacioncontenedores,contenedor,tara,precinto,bulto,bruto,neto,marca,refmercaderias,total)
-values ('',".$refexportacioncontenedores.",'".($contenedor)."',".$tara.",'".($precinto)."',".$bulto.",".$bruto.",".$neto.",'".($marca)."',".$refmercaderias.",".$total.")";
+function insertarExportaciondetalles($refexportacioncontenedores,$bulto,$bruto,$neto,$marca,$refmercaderias,$total) {
+$sql = "insert into dbexportaciondetalles(idexportaciondetalle,refexportacioncontenedores,bulto,bruto,neto,marca,refmercaderias,total)
+values ('',".$refexportacioncontenedores.",".$bulto.",".$bruto.",".$neto.",'".($marca)."',".$refmercaderias.",".$total.")";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarExportaciondetalles($id,$refexportacioncontenedores,$contenedor,$tara,$precinto,$bulto,$bruto,$neto,$marca,$refmercaderias,$total) {
+function modificarExportaciondetalles($id,$refexportacioncontenedores,$bulto,$bruto,$neto,$marca,$refmercaderias,$total) {
 $sql = "update dbexportaciondetalles
 set
-refexportacioncontenedores = ".$refexportacioncontenedores.",contenedor = '".($contenedor)."',tara = ".$tara.",precinto = '".($precinto)."',bulto = ".$bulto.",bruto = ".$bruto.",neto = ".$neto.",marca = '".($marca)."',refmercaderias = ".$refmercaderias.",total = ".$total."
+refexportacioncontenedores = ".$refexportacioncontenedores.",bulto = ".$bulto.",bruto = ".$bruto.",neto = ".$neto.",marca = '".($marca)."',refmercaderias = ".$refmercaderias.",total = ".$total."
 where idexportaciondetalle =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -408,9 +408,6 @@ function traerExportaciondetalles() {
 $sql = "select
 e.idexportaciondetalle,
 e.refexportacioncontenedores,
-e.contenedor,
-e.tara,
-e.precinto,
 e.bulto,
 e.bruto,
 e.neto,
@@ -427,7 +424,7 @@ return $res;
 
 
 function traerExportaciondetallesPorId($id) {
-$sql = "select idexportaciondetalle,refexportacioncontenedores,contenedor,tara,precinto,bulto,bruto,neto,marca,refmercaderias,total from dbexportaciondetalles where idexportaciondetalle =".$id;
+$sql = "select idexportaciondetalle,refexportacioncontenedores,bulto,bruto,neto,marca,refmercaderias,total from dbexportaciondetalles where idexportaciondetalle =".$id;
 $res = $this->query($sql,0);
 return $res;
 }
@@ -438,18 +435,18 @@ return $res;
 
 /* PARA Exportaciones */
 
-function insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura) {
-$sql = "insert into dbexportaciones(idexportacion,refclientes,refbuques,refcolores,refdestinos,refpuertos,permisoembarque,booking,despachante,cuit,fecha,factura)
-values ('',".$refclientes.",".$refbuques.",".$refcolores.",".$refdestinos.",".$refpuertos.",'".($permisoembarque)."','".($booking)."','".($despachante)."','".($cuit)."','".($fecha)."','".($factura)."')";
+function insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc) {
+$sql = "insert into dbexportaciones(idexportacion,refclientes,refbuques,refcolores,refdestinos,refpuertos,permisoembarque,booking,despachante,cuit,fecha,factura,tc)
+values ('',".$refclientes.",".$refbuques.",".$refcolores.",".$refdestinos.",".$refpuertos.",'".($permisoembarque)."','".($booking)."','".($despachante)."','".($cuit)."','".($fecha)."','".($factura)."',".$tc.")";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarExportaciones($id,$refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura) {
+function modificarExportaciones($id,$refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc) {
 $sql = "update dbexportaciones
 set
-refclientes = ".$refclientes.",refbuques = ".$refbuques.",refcolores = ".$refcolores.",refdestinos = ".$refdestinos.",refpuertos = ".$refpuertos.",permisoembarque = '".($permisoembarque)."',booking = '".($booking)."',despachante = '".($despachante)."',cuit = '".($cuit)."',fecha = '".($fecha)."',factura = '".($factura)."'
+refclientes = ".$refclientes.",refbuques = ".$refbuques.",refcolores = ".$refcolores.",refdestinos = ".$refdestinos.",refpuertos = ".$refpuertos.",permisoembarque = '".($permisoembarque)."',booking = '".($booking)."',despachante = '".($despachante)."',cuit = '".($cuit)."',fecha = '".($fecha)."',factura = '".($factura)."', tc = ".$tc."
 where idexportacion =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -476,7 +473,8 @@ e.booking,
 e.despachante,
 e.cuit,
 e.fecha,
-e.factura
+e.factura,
+e.tc
 from dbexportaciones e
 inner join dbclientes cli ON cli.idcliente = e.refclientes
 inner join tbbuques buq ON buq.idbuque = e.refbuques
@@ -506,7 +504,8 @@ function traerExportacionesGrid() {
 				e.refbuques,
 				e.refcolores,
 				e.refdestinos,
-				e.refpuertos
+				e.refpuertos,
+				e.tc
 			from dbexportaciones e
 			inner join dbclientes cli ON cli.idcliente = e.refclientes
 			inner join tbbuques buq ON buq.idbuque = e.refbuques

@@ -256,25 +256,59 @@ $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarExportaciondetalles($id);
 echo $res;
 }
+
 function insertarExportaciones($serviciosReferencias) {
-$refclientes = $_POST['refclientes'];
-$refbuques = $_POST['refbuques'];
-$refcolores = $_POST['refcolores'];
-$refdestinos = $_POST['refdestinos'];
-$refpuertos = $_POST['refpuertos'];
-$permisoembarque = $_POST['permisoembarque'];
-$booking = $_POST['booking'];
-$despachante = $_POST['despachante'];
-$cuit = $_POST['cuit'];
-$fecha = $_POST['fecha'];
-$factura = $_POST['factura'];
-$res = $serviciosReferencias->insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura);
-if ((integer)$res > 0) {
-echo '';
-} else {
-echo 'Huvo un error al insertar datos';
+	$refclientes = $_POST['refclientes'];
+	$refbuques = $_POST['refbuques'];
+	$refcolores = $_POST['refcolores'];
+	$refdestinos = $_POST['refdestinos'];
+	$refpuertos = $_POST['refpuertos'];
+	$permisoembarque = $_POST['permisoembarque'];
+	$booking = $_POST['booking'];
+	$despachante = $_POST['despachante'];
+	$cuit = $_POST['cuit'];
+	$fecha = $_POST['fecha'];
+	$factura = $_POST['factura'];
+	$tc = $_POST['tc'];
+
+	$lstContenedores = $_POST['tokenContenedor'];
+	$lstItems = $_POST['tokenItem'];
+
+	
+	$res = $serviciosReferencias->insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc);
+	
+	if ((integer)$res > 0) {
+		for ($i=1; $i <=$lstContenedores ; $i++) {
+			if (isset($_POST['contenedor'.$i])) {
+				$contenedor = $_POST['contenedor'.$i];
+				$tara = $_POST['tara'.$i];
+				$precinto = $_POST['precinto'.$i];
+
+				$resContenedor = $serviciosReferencias->insertarExportacioncontenedores($res, $contenedor,$tara,$precinto);
+
+				for ($k=0; $k <= $lstItems ; $k++) { 
+					if (isset($_POST['bulto'.$i.$k])) {
+						$bulto = $_POST['bulto'.$i.$k];
+						$bruto = $_POST['bruto'.$i.$k];
+						$neto = $_POST['neto'.$i.$k];
+						$marca = $_POST['marca'.$i.$k];
+						$refmercaderias = $_POST['refmercaderias'.$i.$k];
+						$total = 0;
+
+						$serviciosReferencias->insertarExportaciondetalles($resContenedor,$bulto,$bruto,$neto,$marca,$refmercaderias,$total);
+					}
+				}
+
+
+			}
+		}
+
+		echo '';
+	} else {
+		echo 'Huvo un error al insertar datos';
+	}
 }
-}
+
 function modificarExportaciones($serviciosReferencias) {
 $id = $_POST['id'];
 $refclientes = $_POST['refclientes'];
