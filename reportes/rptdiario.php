@@ -22,89 +22,95 @@ require('fpdf.php');
 $fechaPost		= 	$_GET['fecha'];
 
 
-if (mysql_num_rows($resEmpresa)>0) {
-	$empresa = mysql_result($resEmpresa,0,'empresa');	
-} else {
-	$empresa = '';	
-}
+$datos = $serviciosReferancias->rptExportacionesDiarias($fecha);
 
 
-$res1	= $serviciosReferancias->traerVentasPorDiaPorTipoTotales($fechaPost, 1);
-$res2	= $serviciosReferancias->traerVentasPorDiaPorTipoTotales($fechaPost, 2);
-$res3	= $serviciosReferancias->traerVentasPorDiaPorTipoTotales($fechaPost, 3);
-
-$cajaInicio = $serviciosReferancias->traerCajadiariaPorFecha($fecha);
-
-if (mysql_num_rows($cajaInicio)>0) {
-	$caja = mysql_result($cajaInicio,0,'inicio');	
-} else {
-	$caja = 0;
-}
-
-$TotalIngresos = 0;
-$TotalEgresos = 0;
 $Totales = 0;
-$Caja = 0;
 
-$pdf = new FPDF();
+
+$pdf = new FPDF('L','mm','A4');
 
 $pdf->AddPage();
 
 $pdf->SetFont('Arial','U',17);
-$pdf->Cell(180,7,'Reporte Caja Diaria Totales',0,0,'C',false);
+$pdf->Cell(250,7,'Reporte Diario Totales',0,0,'C',false);
 $pdf->Ln();
-$pdf->SetFont('Arial','U',14);
-$pdf->Cell(180,7,"Empresa: ".strtoupper($empresa),0,0,'C',false);
-$pdf->Ln();
-$pdf->Cell(180,7,'Fecha: '.date('Y-m-d'),0,0,'C',false);
+$pdf->Cell(250,7,'Fecha: '.date('Y-m-d'),0,0,'C',false);
 $pdf->Ln();
 
-$pdf->SetFont('Arial','',10);
+$pdf->SetFont('Arial','',8);
 
+/*
+SIM	CANAL	OFIC.	EXPORTADOR	ITEM	SUB	CONTENEDOR	BOOKING	PAIS	
+PUERTO	AGENCIA	PRECINTO	MARCAS	BULTOS	BRUTO	NETO	VAL. UNIT	
+FOB	TC	FOB PESOS	GASTOS	%	SUBTOTAL	MINIMO	TOTAL	FACT
+
+*/
+$pdf->SetX(5);
+$pdf->Cell(15,4,'SIM',1,0,'L',false);
+$pdf->Cell(15,4,'CANAL',1,0,'C',false);
+$pdf->Cell(15,4,'OFIC.',1,0,'C',false);
+$pdf->Cell(20,4,'EXPORTADOR',1,0,'C',false);
+$pdf->Cell(8,4,'ITEM',1,0,'C',false);
+$pdf->Cell(15,4,'BOOKING',1,0,'C',false);
+$pdf->Cell(20,4,'PAIS',1,0,'C',false);
+$pdf->Cell(20,4,'PUERTO',1,0,'C',false);
+$pdf->Cell(20,4,'AGENCIA',1,0,'C',false); // ??? preguntar
+$pdf->Cell(10,4,'BULTOS',1,0,'C',false);
+$pdf->Cell(12,4,'BRUTO',1,0,'C',false);
+$pdf->Cell(12,4,'NETO',1,0,'C',false);
+$pdf->Cell(8,4,'VAL.UNIT',1,0,'C',false);
+$pdf->Cell(12,4,'FOB',1,0,'C',false);
+$pdf->Cell(5,4,'TC',1,0,'C',false);
+$pdf->Cell(12,4,'FOB PESOS',1,0,'C',false);
+$pdf->Cell(8,4,'GASTOS',1,0,'C',false);
+$pdf->Cell(5,4,'%',1,0,'C',false);
+$pdf->Cell(12,4,'SUBTOTAL',1,0,'C',false);
+$pdf->Cell(10,4,'MINIMO',1,0,'C',false);
+$pdf->Cell(12,4,'TOTAL',1,0,'C',false);
+$pdf->Cell(5,4,'FACT',1,0,'C',false);
+
+$subTotal = 0;
+while ($row = mysql_fetch_array($datos)) {
+	$subTotal = 0;
+	$pdf->Ln();
+	$pdf->SetX(5);
+	$pdf->Cell(15,4,$row['permisoembarque'],1,0,'L',false);
+	$pdf->Cell(15,4,$row['color'],1,0,'C',false);
+	$pdf->Cell(15,4,$row['fecha'],1,0,'C',false);
+	$pdf->Cell(20,4,$row['razonsocial'],1,0,'C',false);
+	$pdf->Cell(8,4,$row['cantidad'],1,0,'C',false);
+	$pdf->Cell(15,4,$row['booking'],1,0,'C',false);
+	$pdf->Cell(20,4,$row['destino'],1,0,'C',false);
+	$pdf->Cell(20,4,$row['puerto'],1,0,'C',false);
+	$pdf->Cell(20,4,'AG Martin',1,0,'C',false);
+	$pdf->Cell(10,4,$row['bulto'],1,0,'C',false);
+	$pdf->Cell(12,4,$row['bruto'],1,0,'C',false);
+	$pdf->Cell(12,4,$row['neto'],1,0,'C',false);
+	$pdf->Cell(8,4,$row['valorunitario'],1,0,'C',false);
+	$pdf->Cell(12,4,$row['neto'] * $row['valorunitario'],1,0,'C',false);
+	$pdf->Cell(5,4,$row['tc'],1,0,'C',false);
+	$pdf->Cell(12,4,$row['tc'] * $row['neto'] * $row['valorunitario'],1,0,'C',false);
+	$pdf->Cell(8,4,'1000',1,0,'C',false);
+	$pdf->Cell(5,4,'3%',1,0,'C',false);
+	$pdf->Cell(12,4,$row['tc'] * $row['neto'] * $row['valorunitario'] * 0.03,1,0,'C',false);
+	$pdf->Cell(10,4,'2500',1,0,'C',false);
+	
+	if (2500 >= $row['tc'] * $row['neto'] * $row['valorunitario'] * 0.03) {
+		$subTotal = 2500 + 1000;
+	} else {
+		$subTotal = ($row['tc'] * $row['neto'] * $row['valorunitario'] * 0.03) + 1000;
+	}
+
+	$pdf->Cell(12,4,$subTotal,1,0,'C',false);
+	$pdf->Cell(5,4,$row['factura'],1,0,'C',false);
+}
 $pdf->Ln();
 
 $pdf->SetFont('Arial','',14);
 
-if (mysql_num_rows($res1)>0) {
-	$pdf->Ln();
-	$pdf->Cell(60,7,'Caja Real: $ '.number_format(mysql_result($res1,0,0), 2, '.', ','),0,0,'L',false);
-	$Totales = mysql_result($res1,0,0);
-} else {
-	$pdf->Ln();
-	$pdf->Cell(60,7,'Caja Real: $ 0',0,0,'L',false);
-}
 
-if (mysql_num_rows($res2)>0) {
-	$pdf->Ln();
-	$pdf->Cell(60,7,'Creditos: $ '.number_format(mysql_result($res2,0,0), 2, '.', ','),0,0,'L',false);
-	$TotalIngresos = mysql_result($res2,0,0);
-} else {
-	$pdf->Ln();
-	$pdf->Cell(60,7,'Creditos: $ 0',0,0,'L',false);
-} 
-
-if (mysql_num_rows($res3)>0) {
-	$pdf->Ln();
-	$pdf->Cell(60,7,'Gastos: $ '.number_format(mysql_result($res3,0,0), 2, '.', ','),0,0,'L',false);
-	$TotalEgresos = mysql_result($res3,0,0);
-} else {
-	$pdf->Ln();
-	$pdf->Cell(60,7,'Gastos: $ 0',0,0,'L',false);
-} 
-
-$pdf->Ln();
-$pdf->Cell(60,7,'Total Caja: $ '.number_format((float)$Totales - (float)$TotalEgresos, 2, '.', ','),0,0,'L',false);
-
-$pdf->Ln();
-$pdf->Cell(60,7,'Total Dia: $ '.number_format((float)$TotalIngresos + (float)$Totales, 2, '.', ','),0,0,'L',false);
-
-$pdf->Ln();
-$pdf->Cell(60,7,'Inicio Caja: $ '.number_format((float)$Caja, 2, '.', ','),0,0,'L',false);
-
-$pdf->Ln();
-$pdf->Cell(60,7,'Total Caja + Inicio de Caja: $ '.number_format((float)$Totales - (float)$TotalEgresos + (float)$Caja, 2, '.', ','),0,0,'L',false);
-
-$nombreTurno = "CajaDiaria-".$fecha.".pdf";
+$nombreTurno = "rptDiario-".$fecha.".pdf";
 
 $pdf->Output($nombreTurno,'D');
 

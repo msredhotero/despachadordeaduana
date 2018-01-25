@@ -615,7 +615,11 @@ function rptExportacionesDiarias($fecha) {
 				sum(t.tara) as tara,
 				sum(t.bulto) as bulto,
 				sum(t.bruto) as bruto,
-				sum(t.neto) as neto
+				sum(t.neto) as neto,
+				sum(t.cantidad) as cantidad,
+				t.valorunitario,
+                t.contenedor,
+				t.precinto
 				from	(
 						select
 								e.idexportacion,
@@ -637,9 +641,13 @@ function rptExportacionesDiarias($fecha) {
 								e.refpuertos,
 								e.tc,
 				                ec.tara,
+				                ec.contenedor,
+                                ec.precinto,
 				                sum(ed.bulto) as bulto,
 				                sum(ed.bruto) as bruto,
-				                sum(ed.neto) as neto
+				                sum(ed.neto) as neto,
+				                count(ed.idexportaciondetalle) as cantidad,
+				                cli.valorunitario
 							from dbexportaciones e
 				            inner join dbexportacioncontenedores ec ON e.idexportacion = ec.refexportaciones
 				            inner join dbexportaciondetalles ed ON ed.refexportacioncontenedores = ec.idexportacioncontenedor
@@ -658,7 +666,10 @@ function rptExportacionesDiarias($fecha) {
 								e.refclientes,e.refbuques,
 								e.refcolores,e.refdestinos,
 								e.refpuertos,e.tc,
-				                ec.tara
+				                ec.tara,
+				                cli.valorunitario,
+				                ec.contenedor,
+                                ec.precinto
 							) as t
 				            group by t.idexportacion,
 				t.permisoembarque,
@@ -677,7 +688,10 @@ function rptExportacionesDiarias($fecha) {
 				t.refcolores,
 				t.refdestinos,
 				t.refpuertos,
-				t.tc 
+				t.tc ,
+				t.valorunitario,
+                t.contenedor,
+				t.precinto
 				order by t.fecha";
 	
 	$res = $this->query($sql,0);

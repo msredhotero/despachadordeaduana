@@ -7,7 +7,7 @@ class appconfig {
 function conexion() {
 		
 		$hostname = "localhost";
-		$database = "exportador";
+		$database = "exportacion";
 		$username = "root";
 		$password = "";
 		

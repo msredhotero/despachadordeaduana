@@ -462,6 +462,11 @@ $(document).ready(function(){
 		  }
 	});//fin del boton modificar
 
+
+	$('#despachante').val('AVILA GUSTAVO');
+	$('#cuit').val('20160883082');
+
+
 	 $( "#dialog2" ).dialog({
 		 	
 			    autoOpen: false,
