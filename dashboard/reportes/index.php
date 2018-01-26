@@ -59,7 +59,7 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reporte
 	171
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 	<style type="text/css">
 
 		

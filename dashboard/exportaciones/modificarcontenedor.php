@@ -27,51 +27,38 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Exporta
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerExportacionesPorId($id);
+$resResultado = $serviciosReferencias->traerExportacioncontenedoresPorId($id);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Exportacion";
+$singular = "Contenedor";
 
-$plural = "Exportaciones";
+$plural = "Contenedores";
 
-$eliminar = "eliminarExportaciones";
+$eliminar = "eliminarExportacionContenedoresDetallesPorExportacion";
 
-$modificar = "modificarExportaciones";
+$modificar = "modificarExportacioncontenedores";
 
-$idTabla = "idexportacion";
+$idTabla = "idexportacioncontenedor";
 
 $tituloWeb = "Gestión: Despachante de Aduana";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbexportaciones";
+$tabla 			= "dbexportacioncontenedores";
 
-$lblCambio	 	= array("refclientes","refbuques","refpuertos","refdestinos","refcolores",'permisoembarque');
-$lblreemplazo	= array("Clientes","Buques","Puertos","Destinos","Colores",'Permiso de Embarque');
-
-
-$resClientes 	= $serviciosReferencias->traerClientes();
-$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resClientes,array(1),'', mysql_result($resResultado,0,'refclientes'));
-
-$resBuques 	= $serviciosReferencias->traerBuques();
-$cadRef2 	= $serviciosFunciones->devolverSelectBoxActivo($resBuques,array(1),'', mysql_result($resResultado,0,'refbuques'));
-
-$resPuertos 	= $serviciosReferencias->traerPuertos();
-$cadRef3 	= $serviciosFunciones->devolverSelectBoxActivo($resPuertos,array(1),'', mysql_result($resResultado,0,'refpuertos'));
+$lblCambio	 	= array("refexportaciones");
+$lblreemplazo	= array("Permiso de Embarque");
 
 
-$resDestinos 	= $serviciosReferencias->traerDestinos();
-$cadRef5 	= $serviciosFunciones->devolverSelectBoxActivo($resDestinos,array(1),'', mysql_result($resResultado,0,'refdestinos'));
+$resExportacion 	= $serviciosReferencias->traerExportacionesPorId(mysql_result($resResultado,0,'refexportaciones'));
+$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resExportacion,array(6),'', mysql_result($resResultado,0,'refexportaciones'));
 
-
-$resColores 	= $serviciosReferencias->traerColores();
-$cadRef6 	= $serviciosFunciones->devolverSelectBoxActivo($resColores,array(1),'', mysql_result($resResultado,0,'refcolores'));
 
 //die(var_dump($cadRef3));
-$refdescripcion = array(0 => $cadRef,1 => $cadRef2,2 => $cadRef3,3 => $cadRef5,4 => $cadRef6);
-$refCampo 	=  array("refclientes","refbuques","refpuertos","refdestinos","refcolores");
+$refdescripcion = array(0 => $cadRef);
+$refCampo 	=  array("refexportaciones");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -79,31 +66,36 @@ $formulario 	= $serviciosFunciones->camposTablaModificar($id, $idTabla, $modific
 
 
 /////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
-$cabeceras 		= "	<th>Contenedor</th>
-					<th>Tara</th>
-					<th>Precinto</th>";
+$cabeceras 		= "	<th>Bulto</th>
+					<th>Bruto</th>
+					<th>Neto</th>
+					<th>Marca</th>
+					<th>Mercaderia</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerExportacioncontenedoresPorExportacion($id),3);
-
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerExportaciondetallesPorContenedor($id),5);
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla2 			= "dbexportacioncontenedores";
+$tabla2 			= "dbexportaciondetalles";
 
-$lblCambio2	 	= array("refexportaciones");
-$lblreemplazo2	= array("Permiso de Embarque");
+$lblCambio2	 	= array("refexportacioncontenedores","refmercaderias");
+$lblreemplazo2	= array("Contenedor","Mercaderia");
 
 
-$resExportacion 	= $serviciosReferencias->traerExportacionesPorId($id);
-$cadRef3 	= $serviciosFunciones->devolverSelectBoxActivo($resExportacion,array(6),'', $id);
+$resExportacion 	= $serviciosReferencias->traerExportacioncontenedoresPorId($id);
+$cadRef3 	= $serviciosFunciones->devolverSelectBoxActivo($resExportacion,array(2),'', $id);
 
-$refdescripcion2 = array(0 => $cadRef3);
-$refCampo2 	=  array("refexportaciones");
+$resMercaderias 	= $serviciosReferencias->traerMercaderias();
+$cadRef4 	= $serviciosFunciones->devolverSelectBoxObligatorio($resMercaderias,array(1),'');
 
-$formularioContenedor 	= $serviciosFunciones->camposTabla("insertarExportacioncontenedores" ,$tabla2,$lblCambio2,$lblreemplazo2,$refdescripcion2,$refCampo2);
+$refdescripcion2 = array(0 => $cadRef3,1=>$cadRef4);
+$refCampo2 	=  array("refexportacioncontenedores","refmercaderias");
+
+$formularioItem 	= $serviciosFunciones->camposTabla("insertarExportaciondetalles" ,$tabla2,$lblCambio2,$lblreemplazo2,$refdescripcion2,$refCampo2);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
 
 ?>
 
@@ -194,7 +186,7 @@ $formularioContenedor 	= $serviciosFunciones->camposTabla("insertarExportacionco
                         <button type="button" class="btn btn-warning" id="cargar" style="margin-left:0px;">Modificar</button>
                     </li>
                     <li>
-                        <button type="button" class="btn btn-primary" id="agregar" style="margin-left:0px;" data-toggle="modal" data-target="#myModal3">Agregar Contenedor</button>
+                        <button type="button" class="btn btn-primary" id="agregar" style="margin-left:0px;" data-toggle="modal" data-target="#myModal3">Agregar Item</button>
                     </li>
                     <li>
                         <button type="button" class="btn btn-danger borrar" id="<?php echo $id; ?>" style="margin-left:0px;">Eliminar</button>
@@ -214,7 +206,7 @@ $formularioContenedor 	= $serviciosFunciones->camposTabla("insertarExportacionco
 
     <div class="boxInfoLargo">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Contenedores Cargados</p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Items Cargados</p>
         	
         </div>
     	<div class="cuerpoBox">
@@ -229,16 +221,7 @@ $formularioContenedor 	= $serviciosFunciones->camposTabla("insertarExportacionco
 
 </div>
 
-<div id="dialog3" title="Eliminar <?php echo $singular; ?>">
-    	<p>
-        	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
-            ¿Esta seguro que desea eliminar el <?php echo $singular; ?>?.<span id="proveedorEli"></span>
-        </p>
-        <p><strong>Importante: </strong>Si elimina la exportacion se perderan todos los datos de este</p>
-        <input type="hidden" value="" id="idEliminar2" name="idEliminar">
-</div>
-
-<div id="dialog2" title="Eliminar Contenedor">
+<div id="dialog3" title="Eliminar Contenedor">
     	<p>
         	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
             ¿Esta seguro que desea eliminar el contenedor?.<span id="proveedorEli"></span>
@@ -247,6 +230,16 @@ $formularioContenedor 	= $serviciosFunciones->camposTabla("insertarExportacionco
         <input type="hidden" value="" id="idEliminar" name="idEliminar">
 </div>
 
+<div id="dialog2" title="Eliminar Contenedor">
+    	<p>
+        	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
+            ¿Esta seguro que desea eliminar el item?.<span id="proveedorEli"></span>
+        </p>
+        <p><strong>Importante: </strong>Si elimina el item se perderan todos los datos de este</p>
+        <input type="hidden" value="" id="idEliminar" name="idEliminar">
+</div>
+
+
 <!-- Modal -->
 <div class="modal fade" id="myModal3" tabindex="1" style="z-index:500000;" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog modal-lg" role="document">
@@ -254,13 +247,13 @@ $formularioContenedor 	= $serviciosFunciones->camposTabla("insertarExportacionco
       <form class="form-inline formulario" role="form">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Agrear Contenedor</h4>
+        <h4 class="modal-title" id="myModalLabel">Agrear Item</h4>
       </div>
       <div class="modal-body">
-        <?php echo $formularioContenedor; ?>
+        <?php echo $formularioItem; ?>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" id="cargarContenedor">Agregar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="cargarItem">Agregar</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         
       </div>
@@ -282,7 +275,7 @@ $(document).ready(function(){
 	
 	$('.volver').click(function(event){
 		 
-		url = "index.php";
+		url = "modificar.php?id=<?php echo mysql_result($resResultado,0,'refexportaciones'); ?>";
 		$(location).attr('href',url);
 	});//fin del boton modificar
 	
@@ -291,21 +284,6 @@ $(document).ready(function(){
 		  if (!isNaN(usersid)) {
 			$("#idEliminar2").val(usersid);
 			$("#dialog3").dialog("open");
-
-			
-			//url = "../clienteseleccionado/index.php?idcliente=" + usersid;
-			//$(location).attr('href',url);
-		  } else {
-			alert("Error, vuelva a realizar la acción.");	
-		  }
-	});//fin del boton eliminar
-
-
-	$('.varborrar').click(function(event){
-		  usersid =  $(this).attr("id");
-		  if (!isNaN(usersid)) {
-			$("#idEliminar").val(usersid);
-			$("#dialog2").dialog("open");
 
 			
 			//url = "../clienteseleccionado/index.php?idcliente=" + usersid;
@@ -333,7 +311,7 @@ $(document).ready(function(){
 											
 									},
 									success:  function (response) {
-											url = "index.php";
+											url = "modificar.php?id=<?php echo mysql_result($resResultado,0,'refexportaciones'); ?>";
 											$(location).attr('href',url);
 											
 									}
@@ -366,14 +344,14 @@ $(document).ready(function(){
 				    "Eliminar": function() {
 	
 						$.ajax({
-									data:  {id: $('#idEliminar').val(), accion: 'eliminarExportacioncontenedores'},
+									data:  {id: $('#idEliminar').val(), accion: 'eliminarContenedores'},
 									url:   '../../ajax/ajax.php',
 									type:  'post',
 									beforeSend: function () {
 											
 									},
 									success:  function (response) {
-											url = "modificar.php?id=<?php echo $id; ?>";
+											url = "modificar.php?id=<?php echo mysql_result($resResultado,0,'refexportaciones'); ?>";
 											$(location).attr('href',url);
 											
 									}
@@ -395,7 +373,7 @@ $(document).ready(function(){
 	
 	
 	<?php 
-		echo str_replace('url = "modificar.php?id=" + usersid;', 'url = "modificarcontenedor.php?id=" + usersid;', $serviciosHTML->validacion($tabla));
+		echo str_replace('url = "modificar.php?id=" + usersid;', 'url = "modificaritem.php?id=" + usersid;', $serviciosHTML->validacion($tabla));
 	
 	?>
 	
@@ -462,7 +440,7 @@ $(document).ready(function(){
 
 
 	//al enviar el formulario
-    $('#cargarContenedor').click(function(){
+    $('#cargarItem').click(function(){
 		
 			//información del formulario
 			var formData = new FormData($(".formulario")[1]);
@@ -489,7 +467,7 @@ $(document).ready(function(){
 						$(".alert").removeClass("alert-danger");
 						$(".alert").removeClass("alert-info");
 						$(".alert").addClass("alert-success");
-						$(".alert").html('<strong>Ok!</strong> Se cargo exitosamente el <strong>Contenedor</strong>. ');
+						$(".alert").html('<strong>Ok!</strong> Se cargo exitosamente el <strong>Item</strong>. ');
 						$(".alert").delay(3000).queue(function(){
 							/*aca lo que quiero hacer 
 							  después de los 2 segundos de retraso*/
@@ -497,7 +475,7 @@ $(document).ready(function(){
 							
 						});
 						$("#load").html('');
-						url = "modificar.php?id=<?php echo $id; ?>";
+						url = "modificarcontenedor.php?id=<?php echo $id; ?>";
 						$(location).attr('href',url);
 						//alert('<option value="' + data.toString() + '">' + $('#reftipocontactos option:selected').text() + ', ' + $('#nombre1').val() + '</option>');
 

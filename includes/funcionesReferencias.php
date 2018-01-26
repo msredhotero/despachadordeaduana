@@ -370,10 +370,11 @@ return $res;
 function traerExportacioncontenedoresPorExportacion($idExportaciones) {
 $sql = "select
 e.idexportacioncontenedor,
-e.refexportaciones,
 e.contenedor,
 e.tara,
-e.precinto
+e.precinto,
+e.refexportaciones
+
 from dbexportacioncontenedores e
 inner join dbexportaciones expo ON expo.idexportacion = e.refexportaciones
 inner join dbclientes cl ON cl.idcliente = expo.refclientes
@@ -425,6 +426,33 @@ return $res;
 }
 
 
+function eliminarExportacionContenedoresDetallesPorExportacion($idExportacion) {
+$sql = "delete dbexportaciondetalles,dbexportacioncontenedores 
+			from dbexportacioncontenedores
+			inner join dbexportaciondetalles ON dbexportacioncontenedores.idexportacioncontenedor = dbexportaciondetalles.refexportacioncontenedores
+		where dbexportacioncontenedores.refexportaciones =".$idExportacion;
+$res = $this->query($sql,0);
+return $res;
+}
+
+function eliminarExportacionContenedoresDetallesPorContenedor($idContenedor) {
+$sqlA = "delete 
+			from dbexportaciondetalles
+		where refexportacioncontenedores =".$idContenedor;
+
+$resA = $this->query($sqlA,0);
+
+$sql = "delete 
+			from dbexportacioncontenedores
+		where idexportacioncontenedor =".$idContenedor;
+
+$res = $this->query($sql,0);
+
+
+return $res;
+}
+
+
 function traerExportaciondetalles() {
 $sql = "select
 e.idexportaciondetalle,
@@ -465,6 +493,28 @@ return $res;
 }
 
 
+function traerExportaciondetallesPorContenedor($idContenedor) {
+$sql = "select
+e.idexportaciondetalle,
+e.refexportacioncontenedores,
+e.bulto,
+e.bruto,
+e.neto,
+e.marca,
+tm.nombre as mercaderia,
+e.refmercaderias,
+e.total
+from dbexportaciondetalles e
+inner join dbexportacioncontenedores expo ON expo.idexportacioncontenedor = e.refexportacioncontenedores
+inner join dbexportaciones ex ON ex.idexportacion = expo.refexportaciones
+inner join tbmercaderias tm on tm.idmercaderia = e.refmercaderias
+where expo.idexportacioncontenedor = ".$idContenedor."
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
 function traerExportaciondetallesPorId($id) {
 $sql = "select idexportaciondetalle,refexportacioncontenedores,bulto,bruto,neto,marca,refmercaderias,total from dbexportaciondetalles where idexportaciondetalle =".$id;
 $res = $this->query($sql,0);
@@ -496,8 +546,32 @@ return $res;
 
 
 function eliminarExportaciones($id) {
-$sql = "delete from dbexportaciones where idexportacion =".$id;
+
+
+$sqlA = "delete 
+			from dbexportaciondetalles
+		where refexportacioncontenedores in 
+		(select idexportacioncontenedor 
+			from dbexportacioncontenedores ec
+			inner join dbexportaciones e ON e.idexportacion = ec.refexportaciones
+			where e.idexportacion = ".$id.")";
+
+$resA = $this->query($sqlA,0);
+
+$sqlB = "delete 
+			from dbexportacioncontenedores
+		where refexportaciones =".$id;
+
+$resB = $this->query($sqlB,0);
+
+
+$sql = "delete 
+			from dbexportaciones
+		where idexportacion =".$id;
+
 $res = $this->query($sql,0);
+
+
 return $res;
 }
 

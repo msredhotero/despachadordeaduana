@@ -26,17 +26,21 @@ $resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Dashboard",$_SESSION
 
 
 
-/////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Orden";
+/////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
+$cabeceras 		= "	<th>Permiso Emb.</th>
+					<th>Clientes</th>
+					<th>Buques</th>
+					<th>Puertos</th>
+					<th>Destinos</th>
+					<th>Colores</th>
+					<th>Booking</th>
+					<th>Fecha</th>
+					<th>Fact.</th>";
 
-$plural = "Ordenes";
+//////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$eliminar = "eliminarOrdenes";
 
-$insertar = "insertarOrdenes";
-
-$tituloWeb = "Gestión: Despachante de Aduana";
-//////////////////////// Fin opciones ////////////////////////////////////////////////
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerExportacionesGrid(),9);
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
@@ -112,7 +116,7 @@ $tituloWeb = "Gestión: Despachante de Aduana";
 					<span class="pull-right clickable panel-collapsed" style="margin-top:-15px; cursor:pointer;"><i class="glyphicon glyphicon-chevron-down"></i></span>
 				</div>
                 <div class="panel-body collapse">
-            		<?php //echo str_replace("example","example2",$lstVentas); ?>
+            		<?php echo $lstCargados; ?>
 								
 				</div>
             </div>
@@ -147,12 +151,12 @@ $tituloWeb = "Gestión: Despachante de Aduana";
   </div>
 </div>
 
-<div id="dialog2" title="Eliminar <?php echo $singular; ?>">
+<div id="dialog2" title="Eliminar Exportaciones">
     	<p>
         	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
-            ¿Esta seguro que desea eliminar el <?php echo $singular; ?>?.<span id="proveedorEli"></span>
+            ¿Esta seguro que desea eliminar la exportacion?.<span id="proveedorEli"></span>
         </p>
-        <p><strong>Importante: </strong>Si elimina el <?php echo $singular; ?> se perderan todos los datos de este</p>
+        <p><strong>Importante: </strong>Si elimina la exportacion se perderan todos los datos de este</p>
         <input type="hidden" value="" id="idEliminar" name="idEliminar">
 </div>
 <script type="text/javascript" src="../js/jquery.dataTables.min.js"></script>
@@ -173,6 +177,8 @@ $(document).ready(function(){
 			$this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
 		}
 	});
+
+	$('.panel-heading span.clickable').click();
 	
 	$('#example').dataTable({
 		"order": [[ 0, "asc" ]],
@@ -202,70 +208,27 @@ $(document).ready(function(){
 	} );
 
 
-	$('#example2').dataTable({
-		"order": [[ 0, "asc" ]],
-		"language": {
-			"emptyTable":     "No hay datos cargados",
-			"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-			"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-			"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-			"infoPostFix":    "",
-			"thousands":      ",",
-			"lengthMenu":     "Mostrar _MENU_ filas",
-			"loadingRecords": "Cargando...",
-			"processing":     "Procesando...",
-			"search":         "Buscar:",
-			"zeroRecords":    "No se encontraron resultados",
-			"paginate": {
-				"first":      "Primero",
-				"last":       "Ultimo",
-				"next":       "Siguiente",
-				"previous":   "Anterior"
-			},
-			"aria": {
-				"sortAscending":  ": activate to sort column ascending",
-				"sortDescending": ": activate to sort column descending"
-			}
-		  }
-	} );
-	
-	$('#example2').on("click",'.varpagos', function(){
-		  
-		  $.ajax({
-				data:  {id: $(this).attr("id"), 
-						accion: 'traerDetallepedidoPorPedido'},
-				url:   '../ajax/ajax.php',
-				type:  'post',
-				beforeSend: function () {
-						
-				},
-				success:  function (response) {
-					$('.detallePedido').html(response);	
-				}
-		});
-	});
+
 	
 	
 
-	$('#example2').on("click",'.varborrar', function(){
+	$('#example').on("click",'.varborrar', function(){
 		  usersid =  $(this).attr("id");
 		  if (!isNaN(usersid)) {
 			$("#idEliminar").val(usersid);
 			$("#dialog2").dialog("open");
 
-			
-			url = "index.php";
-			$(location).attr('href',url);
+		
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	
 		  }
 	});//fin del boton eliminar
 	
-	$('#example2').on("click",'.varmodificar', function(){
+	$('#example').on("click",'.varmodificar', function(){
 		  usersid =  $(this).attr("id");
 		  if (!isNaN(usersid)) {
 			
-			url = "ventas/modificar.php?id=" + usersid;
+			url = "exportaciones/modificar.php?id=" + usersid;
 			$(location).attr('href',url);
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	
@@ -291,7 +254,7 @@ $(document).ready(function(){
 				    "Eliminar": function() {
 	
 						$.ajax({
-									data:  {id: $('#idEliminar').val(), accion: '<?php echo $eliminar; ?>'},
+									data:  {id: $('#idEliminar').val(), accion: 'eliminarExportaciones'},
 									url:   '../ajax/ajax.php',
 									type:  'post',
 									beforeSend: function () {
@@ -514,52 +477,6 @@ $(document).ready(function(){
 });
 </script>
 
-<script>
-	  	var percent_number_step = $.animateNumber.numberStepFactories.append('');
-		$('#lblCliente').animateNumber(
-		  {
-			number: <?php echo $cantClientes; ?>,
-			color: 'green',
-			'font-size': '30px',
-		
-			easing: 'easeInQuad',
-		
-			numberStep: percent_number_step
-		  },
-		  1000
-		);
-		
-		
-		$('#lblVentas').animateNumber(
-		  {
-			number: <?php echo $cantVentas; ?>,
-			color: 'green',
-			'font-size': '30px',
-		
-			easing: 'easeInQuad',
-		
-			numberStep: percent_number_step
-		  },
-		  1000
-		);
-		
-		
-		
-		
-		$('#lblPedidos').animateNumber(
-		  {
-			number: <?php echo $cantPedidos; ?>,
-			color: 'green',
-			'font-size': '30px',
-		
-			easing: 'easeInQuad',
-		
-			numberStep: percent_number_step
-		  },
-		  1000
-		);
-
-	</script>
     
     <script src="../js/chosen.jquery.js" type="text/javascript"></script>
 <script type="text/javascript">

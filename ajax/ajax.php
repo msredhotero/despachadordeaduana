@@ -56,6 +56,11 @@ break;
 case 'eliminarExportacioncontenedores':
 eliminarExportacioncontenedores($serviciosReferencias);
 break;
+
+case 'eliminarExportacionContenedoresDetallesPorExportacion':
+	eliminarExportacionContenedoresDetallesPorExportacion($serviciosReferencias);
+	break;
+
 case 'insertarExportaciondetalles':
 insertarExportaciondetalles($serviciosReferencias);
 break;
@@ -211,21 +216,29 @@ echo 'Huvo un error al modificar datos';
 }
 function eliminarExportacioncontenedores($serviciosReferencias) {
 $id = $_POST['id'];
-$res = $serviciosReferencias->eliminarExportacioncontenedores($id);
+$res = $serviciosReferencias->eliminarExportacionContenedoresDetallesPorContenedor($id);
 echo $res;
 }
+
+function eliminarExportacionContenedoresDetallesPorExportacion($serviciosReferencias) {
+	$id = $_POST['id'];
+	
+	$res = $serviciosReferencias->eliminarExportacionContenedoresDetallesPorExportacion($id);
+	
+	echo $res;
+	
+}
+
 function insertarExportaciondetalles($serviciosReferencias) {
 $refexportacioncontenedores = $_POST['refexportacioncontenedores'];
-$contenedor = $_POST['contenedor'];
-$tara = $_POST['tara'];
-$precinto = $_POST['precinto'];
+
 $bulto = $_POST['bulto'];
 $bruto = $_POST['bruto'];
 $neto = $_POST['neto'];
 $marca = $_POST['marca'];
 $refmercaderias = $_POST['refmercaderias'];
 $total = $_POST['total'];
-$res = $serviciosReferencias->insertarExportaciondetalles($refexportacioncontenedores,$contenedor,$tara,$precinto,$bulto,$bruto,$neto,$marca,$refmercaderias,$total);
+$res = $serviciosReferencias->insertarExportaciondetalles($refexportacioncontenedores,$bulto,$bruto,$neto,$marca,$refmercaderias,$total);
 if ((integer)$res > 0) {
 echo '';
 } else {
@@ -235,16 +248,14 @@ echo 'Huvo un error al insertar datos';
 function modificarExportaciondetalles($serviciosReferencias) {
 $id = $_POST['id'];
 $refexportacioncontenedores = $_POST['refexportacioncontenedores'];
-$contenedor = $_POST['contenedor'];
-$tara = $_POST['tara'];
-$precinto = $_POST['precinto'];
+
 $bulto = $_POST['bulto'];
 $bruto = $_POST['bruto'];
 $neto = $_POST['neto'];
 $marca = $_POST['marca'];
 $refmercaderias = $_POST['refmercaderias'];
 $total = $_POST['total'];
-$res = $serviciosReferencias->modificarExportaciondetalles($id,$refexportacioncontenedores,$contenedor,$tara,$precinto,$bulto,$bruto,$neto,$marca,$refmercaderias,$total);
+$res = $serviciosReferencias->modificarExportaciondetalles($id,$refexportacioncontenedores,$bulto,$bruto,$neto,$marca,$refmercaderias,$total);
 if ($res == true) {
 echo '';
 } else {
