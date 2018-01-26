@@ -152,6 +152,26 @@ case 'eliminarRoles':
 eliminarRoles($serviciosReferencias);
 break;
 
+case 'insertarConfiguracion':
+insertarConfiguracion($serviciosReferencias);
+break;
+case 'modificarConfiguracion':
+modificarConfiguracion($serviciosReferencias);
+break;
+case 'eliminarConfiguracion':
+eliminarConfiguracion($serviciosReferencias);
+break; 
+
+
+case 'insertarAgencias':
+insertarAgencias($serviciosReferencias);
+break;
+case 'modificarAgencias':
+modificarAgencias($serviciosReferencias);
+break;
+case 'eliminarAgencias':
+eliminarAgencias($serviciosReferencias);
+break; 
 /* Fin */
 ////////////////////////////////*****    FIN   *******/////////////////////////////////////
 
@@ -160,6 +180,70 @@ break;
 /* Fin */
 
 /* PARA Roles */
+
+
+function insertarAgencias($serviciosReferencias) {
+$agencia = $_POST['agencia'];
+$res = $serviciosReferencias->insertarAgencias($agencia);
+if ((integer)$res > 0) {
+echo '';
+} else {
+echo 'Huvo un error al insertar datos';
+}
+}
+function modificarAgencias($serviciosReferencias) {
+$id = $_POST['id'];
+$agencia = $_POST['agencia'];
+$res = $serviciosReferencias->modificarAgencias($id,$agencia);
+if ($res == true) {
+echo '';
+} else {
+echo 'Huvo un error al modificar datos';
+}
+}
+function eliminarAgencias($serviciosReferencias) {
+$id = $_POST['id'];
+$res = $serviciosReferencias->eliminarAgencias($id);
+echo $res;
+} 
+
+
+function insertarConfiguracion($serviciosReferencias) {
+	$serviciosReferencias->eliminarConfiguracion();
+
+	$razonsocial = $_POST['razonsocial'];
+	$cuit = $_POST['cuit'];
+	$gastos = $_POST['gastos'];
+	$honorarios = $_POST['honorarios'];
+	
+	$res = $serviciosReferencias->insertarConfiguracion($razonsocial,$cuit,$gastos,$honorarios);
+	
+	if ((integer)$res > 0) {
+		echo '';
+	} else {
+		echo 'Huvo un error al insertar datos';
+	}
+}
+
+
+function modificarConfiguracion($serviciosReferencias) {
+$id = $_POST['id'];
+$razonsocial = $_POST['razonsocial'];
+$cuit = $_POST['cuit'];
+$gastos = $_POST['gastos'];
+$honorarios = $_POST['honorarios'];
+$res = $serviciosReferencias->modificarConfiguracion($id,$razonsocial,$cuit,$gastos,$honorarios);
+if ($res == true) {
+echo '';
+} else {
+echo 'Huvo un error al modificar datos';
+}
+}
+function eliminarConfiguracion($serviciosReferencias) {
+$id = $_POST['id'];
+$res = $serviciosReferencias->eliminarConfiguracion();
+echo $res;
+} 
 
 function insertarClientes($serviciosReferencias) {
 $razonsocial = $_POST['razonsocial'];
@@ -237,8 +321,8 @@ $bruto = $_POST['bruto'];
 $neto = $_POST['neto'];
 $marca = $_POST['marca'];
 $refmercaderias = $_POST['refmercaderias'];
-$total = $_POST['total'];
-$res = $serviciosReferencias->insertarExportaciondetalles($refexportacioncontenedores,$bulto,$bruto,$neto,$marca,$refmercaderias,$total);
+$valorunitario = $_POST['valorunitario'];
+$res = $serviciosReferencias->insertarExportaciondetalles($refexportacioncontenedores,$bulto,$bruto,$neto,$marca,$refmercaderias,$valorunitario);
 if ((integer)$res > 0) {
 echo '';
 } else {
@@ -254,8 +338,8 @@ $bruto = $_POST['bruto'];
 $neto = $_POST['neto'];
 $marca = $_POST['marca'];
 $refmercaderias = $_POST['refmercaderias'];
-$total = $_POST['total'];
-$res = $serviciosReferencias->modificarExportaciondetalles($id,$refexportacioncontenedores,$bulto,$bruto,$neto,$marca,$refmercaderias,$total);
+$valorunitario = $_POST['valorunitario'];
+$res = $serviciosReferencias->modificarExportaciondetalles($id,$refexportacioncontenedores,$bulto,$bruto,$neto,$marca,$refmercaderias,$valorunitario);
 if ($res == true) {
 echo '';
 } else {
@@ -274,6 +358,7 @@ function insertarExportaciones($serviciosReferencias) {
 	$refcolores = $_POST['refcolores'];
 	$refdestinos = $_POST['refdestinos'];
 	$refpuertos = $_POST['refpuertos'];
+	$refagencias = $_POST['refagencias'];
 	$permisoembarque = $_POST['permisoembarque'];
 	$booking = $_POST['booking'];
 	$despachante = $_POST['despachante'];
@@ -281,12 +366,17 @@ function insertarExportaciones($serviciosReferencias) {
 	$fecha = $_POST['fecha'];
 	$factura = $_POST['factura'];
 	$tc = $_POST['tc'];
+	$gastos = $_POST['gastos'];
+	$honorarios = $_POST['honorarios'];
+
+	$clientes = $serviciosReferencias->traerClientesPorId($refclientes);
+	$valorunitario = mysql_result($clientes,0,'valorunitario');
 
 	$lstContenedores = $_POST['tokenContenedor'];
 	$lstItems = $_POST['tokenItem'];
 
 	
-	$res = $serviciosReferencias->insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc);
+	$res = $serviciosReferencias->insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc,$valorunitario,$refagencias,$gastos, $honorarios);
 	
 	if ((integer)$res > 0) {
 		for ($i=1; $i <=$lstContenedores ; $i++) {
@@ -303,10 +393,11 @@ function insertarExportaciones($serviciosReferencias) {
 						$bruto = $_POST['bruto'.$i.$k];
 						$neto = $_POST['neto'.$i.$k];
 						$marca = $_POST['marca'.$i.$k];
+						$valorunitario = $_POST['valorunitario'.$i.$k];
 						$refmercaderias = $_POST['refmercaderias'.$i.$k];
-						$total = 0;
+						
 
-						$serviciosReferencias->insertarExportaciondetalles($resContenedor,$bulto,$bruto,$neto,$marca,$refmercaderias,$total);
+						$serviciosReferencias->insertarExportaciondetalles($resContenedor,$bulto,$bruto,$neto,$marca,$refmercaderias,$valorunitario);
 					}
 				}
 
@@ -321,25 +412,33 @@ function insertarExportaciones($serviciosReferencias) {
 }
 
 function modificarExportaciones($serviciosReferencias) {
-$id = $_POST['id'];
-$refclientes = $_POST['refclientes'];
-$refbuques = $_POST['refbuques'];
-$refcolores = $_POST['refcolores'];
-$refdestinos = $_POST['refdestinos'];
-$refpuertos = $_POST['refpuertos'];
-$permisoembarque = $_POST['permisoembarque'];
-$booking = $_POST['booking'];
-$despachante = $_POST['despachante'];
-$cuit = $_POST['cuit'];
-$fecha = $_POST['fecha'];
-$factura = $_POST['factura'];
-$res = $serviciosReferencias->modificarExportaciones($id,$refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura);
-if ($res == true) {
-echo '';
-} else {
-echo 'Huvo un error al modificar datos';
+	$id = $_POST['id'];
+	$refclientes = $_POST['refclientes'];
+	$refbuques = $_POST['refbuques'];
+	$refcolores = $_POST['refcolores'];
+	$refdestinos = $_POST['refdestinos'];
+	$refpuertos = $_POST['refpuertos'];
+	$refagencias = $_POST['refagencias'];
+	$permisoembarque = $_POST['permisoembarque'];
+	$booking = $_POST['booking'];
+	$despachante = $_POST['despachante'];
+	$cuit = $_POST['cuit'];
+	$fecha = $_POST['fecha'];
+	$factura = $_POST['factura'];
+	$tc = $_POST['tc'];
+	$gastos = $_POST['gastos'];
+	$honorarios = $_POST['honorarios'];
+	$valorunit = $_POST['valorunit'];
+
+	$res = $serviciosReferencias->modificarExportaciones($id,$refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc,$valorunit,$refagencias,$gastos, $honorarios);
+
+	if ($res == true) {
+		echo '';
+	} else {
+		echo 'Huvo un error al modificar datos';
+	}
 }
-}
+
 function eliminarExportaciones($serviciosReferencias) {
 $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarExportaciones($id);

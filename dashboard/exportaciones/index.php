@@ -25,6 +25,20 @@ $fecha = date('Y-m-d');
 $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Exportaciones",$_SESSION['refroll_predio'],'');
 
 
+$resConfiguracion = $serviciosReferencias->traerConfiguracion();
+
+if (mysql_num_rows($resConfiguracion)>0) {
+	$despachador = mysql_result($resConfiguracion,0,'razonsocial');
+	$despachadorCUIT = mysql_result($resConfiguracion,0,'cuit');
+	$gastos = mysql_result($resConfiguracion,0,'gastos');
+	$honorarios = mysql_result($resConfiguracion,0,'honorarios');
+} else {
+	$despachador = '';
+	$despachadorCUIT = '';
+	$gastos =10;
+	$honorarios = 0;
+}
+
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Exportacion";
 
@@ -41,8 +55,8 @@ $tituloWeb = "Gestión: Despachante de Aduana";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbexportaciones";
 
-$lblCambio	 	= array("refclientes","refbuques","refpuertos","refdestinos","refcolores",'permisoembarque');
-$lblreemplazo	= array("Clientes","Buques","Puertos","Destinos","Colores",'Permiso de Embarque');
+$lblCambio	 	= array("refclientes","refbuques","refpuertos","refdestinos","refcolores",'permisoembarque',"refagencias");
+$lblreemplazo	= array("Clientes","Buques","Puertos","Destinos","Colores",'Permiso de Embarque','Agencias');
 
 
 $resClientes 	= $serviciosReferencias->traerClientes();
@@ -62,9 +76,12 @@ $cadRef5 	= $serviciosFunciones->devolverSelectBox($resDestinos,array(1),'');
 $resColores 	= $serviciosReferencias->traerColores();
 $cadRef6 	= $serviciosFunciones->devolverSelectBox($resColores,array(1),'');
 
+$resAgencias 	= $serviciosReferencias->traerAgencias();
+$cadRef7 	= $serviciosFunciones->devolverSelectBox($resAgencias,array(1),'');
+
 //die(var_dump($cadRef3));
-$refdescripcion = array(0 => $cadRef,1 => $cadRef2,2 => $cadRef3,3 => $cadRef5,4 => $cadRef6);
-$refCampo 	=  array("refclientes","refbuques","refpuertos","refdestinos","refcolores");
+$refdescripcion = array(0 => $cadRef,1 => $cadRef2,2 => $cadRef3,3 => $cadRef5,4 => $cadRef6, 5 => $cadRef7);
+$refCampo 	=  array("refclientes","refbuques","refpuertos","refdestinos","refcolores","refagencias");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -171,6 +188,9 @@ if ($_SESSION['refroll_predio'] != 1) {
         	<form class="form-inline formulario" role="form">
         	<div class="row">
 			<?php echo $formulario; ?>
+			<input type="hidden" name="gastosaux" id="gastosaux">
+			<input type="hidden" name="honorariosaux" id="honorariosaux">
+
 				<br>
 				<div class="col-md-12" style="margin-top:25px;" id="lstContenedores">
 					
@@ -253,7 +273,16 @@ $(document).ready(function(){
 	
 
 	$('#colapsarMenu').click();
+	$('#gastos').val(<?php echo $gastos; ?>);
+	$('#honorarios').val(<?php echo $honorarios; ?>);
 
+	$('#cuit').val('<?php echo $despachadorCUIT; ?>');
+	$('#despachante').val('<?php echo $despachador; ?>');
+
+	$('#gastos').prop("disabled",true);
+	$('#honorarios').prop("disabled",true);
+	
+	
 	
 	
 	var table = $('#example').dataTable({
@@ -365,6 +394,15 @@ $(document).ready(function(){
 				}
 			});
 		});
+
+		$('.datavalorunitario').each(function(intIndex){
+			$(this).number( true, 2, '.','' );
+			$(this).change( function() {
+				if ($(this).val() < 0) {
+					$(this).val(0);
+				}
+			});
+		});
 	});
 
 	function agregarItem(id, contenedor) {
@@ -401,7 +439,13 @@ $(document).ready(function(){
 								</select> \
 							</div> \
 						</div> \
-						<div class="form-group col-md-2 col-xs-4" style="display:block"> \
+						<div class="form-group col-md-1 col-xs-3" style="display:block"> \
+							<label for="factura" class="control-label" style="text-align:left">Valor Unit</label> \
+							<div class="input-group col-md-12 col-xs-12"> \
+								<input type="text" class="form-control datavalorunitario" id="valorunitario' + id + idItems + '" name="valorunitario' + id + idItems + '" required=""> \
+							</div> \
+						</div> \
+						<div class="form-group col-md-1 col-xs-4" style="display:block"> \
 							<label for="factura" class="control-label" style="text-align:left">Acciones</label> \
 							<div class="input-group col-md-12 col-xs-12"> \
 								<input type="button" class="btn btn-danger eliminarItem" id="' + idItems + '" value="X"> \
@@ -459,10 +503,6 @@ $(document).ready(function(){
 			alert("Error, vuelva a realizar la acción.");	
 		  }
 	});//fin del boton modificar
-
-
-	$('#despachante').val('AVILA GUSTAVO');
-	$('#cuit').val('20160883082');
 
 
 	 $( "#dialog2" ).dialog({
