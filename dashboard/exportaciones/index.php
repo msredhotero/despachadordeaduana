@@ -275,6 +275,8 @@ $(document).ready(function(){
 	$('#colapsarMenu').click();
 	$('#gastos').val(<?php echo $gastos; ?>);
 	$('#honorarios').val(<?php echo $honorarios; ?>);
+	$('#gastosaux').val(<?php echo $gastos; ?>);
+	$('#honorariosaux').val(<?php echo $honorarios; ?>);
 
 	$('#cuit').val('<?php echo $despachadorCUIT; ?>');
 	$('#despachante').val('<?php echo $despachador; ?>');

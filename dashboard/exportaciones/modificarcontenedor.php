@@ -70,11 +70,12 @@ $cabeceras 		= "	<th>Bulto</th>
 					<th>Bruto</th>
 					<th>Neto</th>
 					<th>Marca</th>
-					<th>Mercaderia</th>";
+					<th>Mercaderia</th>
+					<th>Valor Unit.</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerExportaciondetallesPorContenedor($id),5);
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerExportaciondetallesPorContenedor($id),6);
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////

@@ -366,8 +366,8 @@ function insertarExportaciones($serviciosReferencias) {
 	$fecha = $_POST['fecha'];
 	$factura = $_POST['factura'];
 	$tc = $_POST['tc'];
-	$gastos = $_POST['gastos'];
-	$honorarios = $_POST['honorarios'];
+	$gastos = $_POST['gastosaux'];
+	$honorarios = $_POST['honorariosaux'];
 
 	$clientes = $serviciosReferencias->traerClientesPorId($refclientes);
 	$valorunitario = mysql_result($clientes,0,'valorunitario');
@@ -393,9 +393,8 @@ function insertarExportaciones($serviciosReferencias) {
 						$bruto = $_POST['bruto'.$i.$k];
 						$neto = $_POST['neto'.$i.$k];
 						$marca = $_POST['marca'.$i.$k];
-						$valorunitario = $_POST['valorunitario'.$i.$k];
 						$refmercaderias = $_POST['refmercaderias'.$i.$k];
-						
+						$valorunitario = $_POST['valorunitario'.$i.$k];
 
 						$serviciosReferencias->insertarExportaciondetalles($resContenedor,$bulto,$bruto,$neto,$marca,$refmercaderias,$valorunitario);
 					}
@@ -407,7 +406,7 @@ function insertarExportaciones($serviciosReferencias) {
 
 		echo '';
 	} else {
-		echo 'Huvo un error al insertar datos';
+		echo 'Huvo un error al insertar datos: '.$res;
 	}
 }
 

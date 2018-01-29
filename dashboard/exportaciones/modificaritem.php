@@ -48,8 +48,8 @@ $tituloWeb = "Gestión: Despachante de Aduana";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbexportaciondetalles";
 
-$lblCambio	 	= array("refexportacioncontenedores","refmercaderias");
-$lblreemplazo	= array("Contenedor","Mercaderia");
+$lblCambio	 	= array("refexportacioncontenedores","refmercaderias","valorunitario");
+$lblreemplazo	= array("Contenedor","Mercaderia","Valor Unit.");
 
 
 $resVar1 	= $serviciosReferencias->traerExportacioncontenedoresPorId(mysql_result($resResultado,0,'refexportacioncontenedores'));

@@ -402,7 +402,7 @@ return $res;
 /* PARA Exportaciondetalles */
 
 function insertarExportaciondetalles($refexportacioncontenedores,$bulto,$bruto,$neto,$marca,$refmercaderias,$valorunitario) {
-$sql = "insert into dbexportaciondetalles(idexportaciondetalle,refexportacioncontenedores,bulto,bruto,neto,marca,refmercaderias,total)
+$sql = "insert into dbexportaciondetalles(idexportaciondetalle,refexportacioncontenedores,bulto,bruto,neto,marca,refmercaderias,valorunitario)
 values ('',".$refexportacioncontenedores.",".($bulto == '' ? 0 : $bulto).",".($bruto == '' ? 0 : $bruto).",".($neto == '' ? 0 : $neto).",'".($marca)."',".$refmercaderias.",".($valorunitario == '' ? 0 : $valorunitario).")";
 $res = $this->query($sql,1);
 return $res;
@@ -496,13 +496,13 @@ return $res;
 function traerExportaciondetallesPorContenedor($idContenedor) {
 $sql = "select
 e.idexportaciondetalle,
-e.refexportacioncontenedores,
 e.bulto,
 e.bruto,
 e.neto,
 e.marca,
 tm.nombre as mercaderia,
 e.valorunitario,
+e.refexportacioncontenedores,
 e.refmercaderias
 from dbexportaciondetalles e
 inner join dbexportacioncontenedores expo ON expo.idexportacioncontenedor = e.refexportacioncontenedores
@@ -529,7 +529,7 @@ return $res;
 
 function insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc, $valorunit, $refagencias, $gastos, $honorarios) {
 $sql = "insert into dbexportaciones(idexportacion,refclientes,refbuques,refcolores,refdestinos,refpuertos,permisoembarque,booking,despachante,cuit,fecha,factura,tc,valorunit, fechamodi,refagencias, gastos, honorarios)
-values ('',".$refclientes.",".$refbuques.",".$refcolores.",".$refdestinos.",".$refpuertos.",'".($permisoembarque)."','".($booking)."','".($despachante)."','".($cuit)."','".($fecha)."','".($factura)."',".($tc == '' ? 0 : $tc).",".($valorunit == '' ? 0 : $valorunit).", now(), ".$refagencias.", ".$gastos.", ".$honorarios.")";
+values ('',".$refclientes.",".$refbuques.",".$refcolores.",".$refdestinos.",".$refpuertos.",'".($permisoembarque)."','".($booking)."','".($despachante)."','".($cuit)."','".($fecha)."','".($factura)."',".($tc == '' ? 0 : $tc).",".($valorunit == '' ? 0 : $valorunit).", now(), ".$refagencias.", ".($gastos == '' ? 0 : $gastos).", ".($honorarios == '' ? 0 : $honorarios).")";
 $res = $this->query($sql,1);
 return $res;
 }
