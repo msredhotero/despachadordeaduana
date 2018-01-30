@@ -56,7 +56,7 @@ $tituloWeb = "Gestión: Despachante de Aduana";
 $tabla 			= "dbexportaciones";
 
 $lblCambio	 	= array("refclientes","refbuques","refpuertos","refdestinos","refcolores",'permisoembarque',"refagencias");
-$lblreemplazo	= array("Clientes","Buques","Puertos","Destinos","Colores",'Permiso de Embarque','Agencias');
+$lblreemplazo	= array("Clientes","Buques","Puertos","Destinos","Canales",'Permiso de Embarque','Agencias');
 
 
 $resClientes 	= $serviciosReferencias->traerClientes();
@@ -93,7 +93,7 @@ $cabeceras 		= "	<th>Permiso Emb.</th>
 					<th>Buques</th>
 					<th>Puertos</th>
 					<th>Destinos</th>
-					<th>Colores</th>
+					<th>Canales</th>
 					<th>Booking</th>
 					<th>Fecha</th>
 					<th>Fact.</th>";

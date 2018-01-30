@@ -272,18 +272,18 @@ function existeDevuelveId($sql) {
 
 /* PARA Clientes */
 
-function insertarClientes($razonsocial,$cuit,$valorunitario) {
-$sql = "insert into dbclientes(idcliente,razonsocial,cuit,valorunitario)
-values ('','".($razonsocial)."','".($cuit)."',".$valorunitario.")";
+function insertarClientes($razonsocial,$cuit,$honorarios,$minhonorarios,$gastos) {
+$sql = "insert into dbclientes(idcliente,razonsocial,cuit,honorarios,minhonorarios,gastos)
+values ('','".($razonsocial)."','".($cuit)."',".$honorarios.",".$minhonorarios.",".$gastos.")";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarClientes($id,$razonsocial,$cuit,$valorunitario) {
+function modificarClientes($id,$razonsocial,$cuit,$honorarios,$minhonorarios,$gastos) {
 $sql = "update dbclientes
 set
-razonsocial = '".($razonsocial)."',cuit = '".($cuit)."',valorunitario = ".$valorunitario."
+razonsocial = '".($razonsocial)."',cuit = '".($cuit)."',honorarios = ".$honorarios.",minhonorarios = ".$minhonorarios.",gastos = ".$gastos."
 where idcliente =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -302,7 +302,9 @@ $sql = "select
 c.idcliente,
 c.razonsocial,
 c.cuit,
-c.valorunitario
+c.honorarios,
+c.minhonorarios,
+c.gastos
 from dbclientes c
 order by 1";
 $res = $this->query($sql,0);
@@ -311,7 +313,7 @@ return $res;
 
 
 function traerClientesPorId($id) {
-$sql = "select idcliente,razonsocial,cuit,valorunitario from dbclientes where idcliente =".$id;
+$sql = "select idcliente,razonsocial,cuit,honorarios,minhonorarios,gastos from dbclientes where idcliente =".$id;
 $res = $this->query($sql,0);
 return $res;
 }
@@ -1230,18 +1232,18 @@ return $res;
 
 /* PARA Puertos */
 
-function insertarPuertos($puerto,$bandera) {
-$sql = "insert into tbpuertos(idpuerto,puerto,bandera)
-values ('','".($puerto)."','".($bandera)."')";
+function insertarPuertos($puerto,$bandera,$refdestinos) {
+$sql = "insert into tbpuertos(idpuerto,puerto,bandera,refdestinos)
+values ('','".($puerto)."','".($bandera)."',".$refdestinos.")";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarPuertos($id,$puerto,$bandera) {
+function modificarPuertos($id,$puerto,$bandera,$refdestinos) {
 $sql = "update tbpuertos
 set
-puerto = '".($puerto)."',bandera = '".($bandera)."'
+puerto = '".($puerto)."',bandera = '".($bandera)."',refdestinos = ".$refdestinos."
 where idpuerto =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -1259,8 +1261,10 @@ function traerPuertos() {
 $sql = "select
 p.idpuerto,
 p.puerto,
-p.bandera
+p.bandera,
+p.refdestinos
 from tbpuertos p
+inner join tbdestinos des ON des.iddestino = p.refdestinos
 order by 1";
 $res = $this->query($sql,0);
 return $res;
@@ -1268,13 +1272,160 @@ return $res;
 
 
 function traerPuertosPorId($id) {
-$sql = "select idpuerto,puerto,bandera from tbpuertos where idpuerto =".$id;
+$sql = "select idpuerto,puerto,bandera,refdestinos from tbpuertos where idpuerto =".$id;
 $res = $this->query($sql,0);
 return $res;
 }
 
 /* Fin */
 /* /* Fin de la Tabla: tbpuertos*/
+
+
+/* PARA Referentes */
+
+function insertarReferentes($email,$razonsocial) {
+$sql = "insert into tbreferentes(idreferente,email,razonsocial)
+values ('','".($email)."','".($razonsocial)."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarReferentes($id,$email,$razonsocial) {
+$sql = "update tbreferentes
+set
+email = '".($email)."',razonsocial = '".($razonsocial)."'
+where idreferente =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarReferentes($id) {
+$sql = "delete from tbreferentes where idreferente =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerReferentes() {
+$sql = "select
+r.idreferente,
+r.email,
+r.razonsocial
+from tbreferentes r
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerReferentesPorId($id) {
+$sql = "select idreferente,email,razonsocial from tbreferentes where idreferente =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: tbreferentes*/
+
+
+/* PARA Agenciareferentes */
+
+function insertarAgenciareferentes($refagencias,$refreferentes) {
+$sql = "insert into dbagenciareferentes(idagenciareferente,refagencias,refreferentes)
+values ('',".$refagencias.",".$refreferentes.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarAgenciareferentes($id,$refagencias,$refreferentes) {
+$sql = "update dbagenciareferentes
+set
+refagencias = ".$refagencias.",refreferentes = ".$refreferentes."
+where idagenciareferente =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarAgenciareferentes($id) {
+$sql = "delete from dbagenciareferentes where idagenciareferente =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerAgenciareferentes() {
+$sql = "select
+a.idagenciareferente,
+a.refagencias,
+a.refreferentes
+from dbagenciareferentes a
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerAgenciareferentesPorId($id) {
+$sql = "select idagenciareferente,refagencias,refreferentes from dbagenciareferentes where idagenciareferente =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbagenciareferentes*/
+
+
+/* PARA Clientereferentes */
+
+function insertarClientereferentes($refclientes,$refreferentes) {
+$sql = "insert into dbclientereferentes(idclientereferente,refclientes,refreferentes)
+values ('',".$refclientes.",".$refreferentes.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarClientereferentes($id,$refclientes,$refreferentes) {
+$sql = "update dbclientereferentes
+set
+refclientes = ".$refclientes.",refreferentes = ".$refreferentes."
+where idclientereferente =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarClientereferentes($id) {
+$sql = "delete from dbclientereferentes where idclientereferente =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerClientereferentes() {
+$sql = "select
+c.idclientereferente,
+c.refclientes,
+c.refreferentes
+from dbclientereferentes c
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerClientereferentesPorId($id) {
+$sql = "select idclientereferente,refclientes,refreferentes from dbclientereferentes where idclientereferente =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbclientereferentes*/
 
 
 /* PARA Roles */
@@ -1327,26 +1478,26 @@ return $res;
 
 /* PARA Configuracion */
 
-function insertarConfiguracion($razonsocial,$cuit,$gastos,$honorarios) {
-$sql = "insert into tbconfiguracion(idtbconfiguracion,razonsocial,cuit,gastos,honorarios)
-values ('','".($razonsocial)."','".($cuit)."',".$gastos.",".$honorarios.")";
+function insertarConfiguracion($razonsocial,$cuit) {
+$sql = "insert into tbconfiguracion(idtbconfiguracion,razonsocial,cuit)
+values ('','".($razonsocial)."','".($cuit)."')";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarConfiguracion($id,$razonsocial,$cuit,$gastos,$honorarios) {
+function modificarConfiguracion($id,$razonsocial,$cuit) {
 $sql = "update tbconfiguracion
 set
-razonsocial = '".($razonsocial)."',cuit = '".($cuit)."',gastos = ".$gastos.",honorarios = ".$honorarios."
+razonsocial = '".($razonsocial)."',cuit = '".($cuit)."'
 where idtbconfiguracion =".$id;
 $res = $this->query($sql,0);
 return $res;
 }
 
 
-function eliminarConfiguracion() {
-$sql = "delete from tbconfiguracion ";
+function eliminarConfiguracion($id) {
+$sql = "delete from tbconfiguracion where idtbconfiguracion =".$id;
 $res = $this->query($sql,0);
 return $res;
 }
@@ -1356,9 +1507,7 @@ function traerConfiguracion() {
 $sql = "select
 c.idtbconfiguracion,
 c.razonsocial,
-c.cuit,
-c.gastos,
-c.honorarios
+c.cuit
 from tbconfiguracion c
 order by 1";
 $res = $this->query($sql,0);
@@ -1367,7 +1516,7 @@ return $res;
 
 
 function traerConfiguracionPorId($id) {
-$sql = "select idtbconfiguracion,razonsocial,cuit,gastos,honorarios from tbconfiguracion where idtbconfiguracion =".$id;
+$sql = "select idtbconfiguracion,razonsocial,cuit from tbconfiguracion where idtbconfiguracion =".$id;
 $res = $this->query($sql,0);
 return $res;
 }
@@ -1378,18 +1527,18 @@ return $res;
 
 /* PARA Agencias */
 
-function insertarAgencias($agencia) {
-$sql = "insert into tbagencias(idagencia,agencia)
-values ('','".($agencia)."')";
+function insertarAgencias($agencia,$email) {
+$sql = "insert into tbagencias(idagencia,agencia,email)
+values ('','".($agencia)."','".($email)."')";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarAgencias($id,$agencia) {
+function modificarAgencias($id,$agencia,$email) {
 $sql = "update tbagencias
 set
-agencia = '".($agencia)."'
+agencia = '".($agencia)."',email = '".($email)."'
 where idagencia =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -1406,7 +1555,8 @@ return $res;
 function traerAgencias() {
 $sql = "select
 a.idagencia,
-a.agencia
+a.agencia,
+a.email
 from tbagencias a
 order by 1";
 $res = $this->query($sql,0);
@@ -1415,7 +1565,7 @@ return $res;
 
 
 function traerAgenciasPorId($id) {
-$sql = "select idagencia,agencia from tbagencias where idagencia =".$id;
+$sql = "select idagencia,agencia,email from tbagencias where idagencia =".$id;
 $res = $this->query($sql,0);
 return $res;
 }

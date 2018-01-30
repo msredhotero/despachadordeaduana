@@ -41,14 +41,14 @@ $tituloWeb = "Gestión: Despachador de Aduana";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "tbpuertos";
 
-$lblCambio	 	= array();
-$lblreemplazo	= array();
+$lblCambio	 	= array("refdestinos");
+$lblreemplazo	= array("Destinos");
 
+$resVar		= $serviciosReferencias->traerDestinos();
+$cadRef 	= $serviciosFunciones->devolverSelectBox($resVar,array(1),'');
 
-$cadRef 	= '';
-
-$refdescripcion = array();
-$refCampo 	=  array();
+$refdescripcion = array(0=>$cadRef);
+$refCampo 	=  array("refdestinos");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -56,7 +56,8 @@ $refCampo 	=  array();
 
 /////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
 $cabeceras 		= "	<th>Puertos</th>
-					<th>Bandera</th>";
+					<th>Bandera</th>
+					<th>Destinos</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -65,7 +66,7 @@ $cabeceras 		= "	<th>Puertos</th>
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerPuertos(),2);
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerPuertos(),3);
 
 
 

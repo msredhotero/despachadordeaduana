@@ -172,6 +172,17 @@ break;
 case 'eliminarAgencias':
 eliminarAgencias($serviciosReferencias);
 break; 
+
+case 'insertarReferentes':
+insertarReferentes($serviciosReferencias);
+break;
+case 'modificarReferentes':
+modificarReferentes($serviciosReferencias);
+break;
+case 'eliminarReferentes':
+eliminarReferentes($serviciosReferencias);
+break; 
+
 /* Fin */
 ////////////////////////////////*****    FIN   *******/////////////////////////////////////
 
@@ -179,12 +190,41 @@ break;
 
 /* Fin */
 
+
+function insertarReferentes($serviciosReferencias) {
+$email = $_POST['email'];
+$razonsocial = $_POST['razonsocial'];
+$res = $serviciosReferencias->insertarReferentes($email,$razonsocial);
+if ((integer)$res > 0) {
+echo '';
+} else {
+echo 'Huvo un error al insertar datos';
+}
+}
+function modificarReferentes($serviciosReferencias) {
+$id = $_POST['id'];
+$email = $_POST['email'];
+$razonsocial = $_POST['razonsocial'];
+$res = $serviciosReferencias->modificarReferentes($id,$email,$razonsocial);
+if ($res == true) {
+echo '';
+} else {
+echo 'Huvo un error al modificar datos';
+}
+}
+function eliminarReferentes($serviciosReferencias) {
+$id = $_POST['id'];
+$res = $serviciosReferencias->eliminarReferentes($id);
+echo $res;
+} 
+
 /* PARA Roles */
 
 
 function insertarAgencias($serviciosReferencias) {
 $agencia = $_POST['agencia'];
-$res = $serviciosReferencias->insertarAgencias($agencia);
+$email = $_POST['email'];
+$res = $serviciosReferencias->insertarAgencias($agencia,$email);
 if ((integer)$res > 0) {
 echo '';
 } else {
@@ -194,7 +234,8 @@ echo 'Huvo un error al insertar datos';
 function modificarAgencias($serviciosReferencias) {
 $id = $_POST['id'];
 $agencia = $_POST['agencia'];
-$res = $serviciosReferencias->modificarAgencias($id,$agencia);
+$email = $_POST['email'];
+$res = $serviciosReferencias->modificarAgencias($id,$agencia,$email);
 if ($res == true) {
 echo '';
 } else {
@@ -213,10 +254,8 @@ function insertarConfiguracion($serviciosReferencias) {
 
 	$razonsocial = $_POST['razonsocial'];
 	$cuit = $_POST['cuit'];
-	$gastos = $_POST['gastos'];
-	$honorarios = $_POST['honorarios'];
 	
-	$res = $serviciosReferencias->insertarConfiguracion($razonsocial,$cuit,$gastos,$honorarios);
+	$res = $serviciosReferencias->insertarConfiguracion($razonsocial,$cuit);
 	
 	if ((integer)$res > 0) {
 		echo '';
@@ -230,9 +269,8 @@ function modificarConfiguracion($serviciosReferencias) {
 $id = $_POST['id'];
 $razonsocial = $_POST['razonsocial'];
 $cuit = $_POST['cuit'];
-$gastos = $_POST['gastos'];
-$honorarios = $_POST['honorarios'];
-$res = $serviciosReferencias->modificarConfiguracion($id,$razonsocial,$cuit,$gastos,$honorarios);
+
+$res = $serviciosReferencias->modificarConfiguracion($id,$razonsocial,$cuit);
 if ($res == true) {
 echo '';
 } else {
@@ -245,34 +283,50 @@ $res = $serviciosReferencias->eliminarConfiguracion();
 echo $res;
 } 
 
+
+
 function insertarClientes($serviciosReferencias) {
-$razonsocial = $_POST['razonsocial'];
-$cuit = $_POST['cuit'];
-$valorunitario = $_POST['valorunitario'];
-$res = $serviciosReferencias->insertarClientes($razonsocial,$cuit,$valorunitario);
-if ((integer)$res > 0) {
-echo '';
-} else {
-echo 'Huvo un error al insertar datos';
+	$razonsocial = $_POST['razonsocial'];
+	$cuit = $_POST['cuit'];
+	$honorarios = $_POST['honorarios'];
+	$minhonorarios = $_POST['minhonorarios'];
+	$gastos = $_POST['gastos'];
+	
+	$res = $serviciosReferencias->insertarClientes($razonsocial,$cuit,$honorarios,$minhonorarios,$gastos);
+	
+	if ((integer)$res > 0) {
+		echo '';
+	} else {
+		echo 'Huvo un error al insertar datos';
+	}
 }
-}
+
 function modificarClientes($serviciosReferencias) {
-$id = $_POST['id'];
-$razonsocial = $_POST['razonsocial'];
-$cuit = $_POST['cuit'];
-$valorunitario = $_POST['valorunitario'];
-$res = $serviciosReferencias->modificarClientes($id,$razonsocial,$cuit,$valorunitario);
-if ($res == true) {
-echo '';
-} else {
-echo 'Huvo un error al modificar datos';
+	$id = $_POST['id'];
+	$razonsocial = $_POST['razonsocial'];
+	$cuit = $_POST['cuit'];
+	$honorarios = $_POST['honorarios'];
+	$minhonorarios = $_POST['minhonorarios'];
+	$gastos = $_POST['gastos'];
+	
+	$res = $serviciosReferencias->modificarClientes($id,$razonsocial,$cuit,$honorarios,$minhonorarios,$gastos);
+	
+	if ($res == true) {
+		echo '';
+	} else {
+		echo 'Huvo un error al modificar datos';
+	}
 }
-}
+
+
 function eliminarClientes($serviciosReferencias) {
-$id = $_POST['id'];
-$res = $serviciosReferencias->eliminarClientes($id);
-echo $res;
-}
+	$id = $_POST['id'];
+	$res = $serviciosReferencias->eliminarClientes($id);
+	echo $res;
+} 
+
+
+
 function insertarExportacioncontenedores($serviciosReferencias) {
 $refexportaciones = $_POST['refexportaciones'];
 $contenedor = $_POST['contenedor'];
@@ -605,10 +659,13 @@ $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarMercaderias($id);
 echo $res;
 }
+
+
 function insertarPuertos($serviciosReferencias) {
 $puerto = $_POST['puerto'];
 $bandera = $_POST['bandera'];
-$res = $serviciosReferencias->insertarPuertos($puerto,$bandera);
+$refdestinos = $_POST['refdestinos'];
+$res = $serviciosReferencias->insertarPuertos($puerto,$bandera,$refdestinos);
 if ((integer)$res > 0) {
 echo '';
 } else {
@@ -619,7 +676,8 @@ function modificarPuertos($serviciosReferencias) {
 $id = $_POST['id'];
 $puerto = $_POST['puerto'];
 $bandera = $_POST['bandera'];
-$res = $serviciosReferencias->modificarPuertos($id,$puerto,$bandera);
+$refdestinos = $_POST['refdestinos'];
+$res = $serviciosReferencias->modificarPuertos($id,$puerto,$bandera,$refdestinos);
 if ($res == true) {
 echo '';
 } else {
@@ -630,7 +688,9 @@ function eliminarPuertos($serviciosReferencias) {
 $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarPuertos($id);
 echo $res;
-}
+} 
+
+
 function insertarRoles($serviciosReferencias) {
 $descripcion = $_POST['descripcion'];
 if (isset($_POST['activo'])) {
