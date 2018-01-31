@@ -183,12 +183,74 @@ case 'eliminarReferentes':
 eliminarReferentes($serviciosReferencias);
 break; 
 
+case 'traerPuertosPorDestino':
+	traerPuertosPorDestino($serviciosReferencias, $serviciosFunciones);
+	break;
+case 'traerGastosPorCliente':
+	traerGastosPorCliente($serviciosReferencias, $serviciosFunciones);
+	break;
+case 'traerHonorariosPorCliente':
+	traerHonorariosPorCliente($serviciosReferencias, $serviciosFunciones);
+	break;
+case 'traerHonorariosMinimosPorCliente':
+	traerHonorariosMinimosPorCliente($serviciosReferencias, $serviciosFunciones);
+	break;
 /* Fin */
 ////////////////////////////////*****    FIN   *******/////////////////////////////////////
 
 }
 
 /* Fin */
+
+function traerPuertosPorDestino($serviciosReferencias, $serviciosFunciones) {
+	$iddestino = $_POST['id'];
+
+	$res = $serviciosReferencias->traerPuertosPorDestino($iddestino);
+
+	$cadRef = $serviciosFunciones->devolverSelectBoxObligatorio($res,array(1),'');
+
+	echo $cadRef;
+
+}
+
+function traerGastosPorCliente($serviciosReferencias, $serviciosFunciones) {
+	$idcliente = $_POST['id'];
+
+	$res = $serviciosReferencias->traerClientesPorId($idcliente);
+
+	if (mysql_num_rows($res)>0) {
+		echo mysql_result($res, 0,'gastos');
+	} else {
+		echo 0;
+	}
+
+}
+
+function traerHonorariosPorCliente($serviciosReferencias, $serviciosFunciones) {
+	$idcliente = $_POST['id'];
+
+	$res = $serviciosReferencias->traerClientesPorId($idcliente);
+
+	if (mysql_num_rows($res)>0) {
+		echo mysql_result($res, 0,'honorarios');
+	} else {
+		echo 0;
+	}
+
+}
+
+function traerHonorariosMinimosPorCliente($serviciosReferencias, $serviciosFunciones) {
+	$idcliente = $_POST['id'];
+
+	$res = $serviciosReferencias->traerClientesPorId($idcliente);
+
+	if (mysql_num_rows($res)>0) {
+		echo mysql_result($res, 0,'minhonorarios');
+	} else {
+		echo 0;
+	}
+
+}
 
 
 function insertarReferentes($serviciosReferencias) {
@@ -222,26 +284,48 @@ echo $res;
 
 
 function insertarAgencias($serviciosReferencias) {
-$agencia = $_POST['agencia'];
-$email = $_POST['email'];
-$res = $serviciosReferencias->insertarAgencias($agencia,$email);
-if ((integer)$res > 0) {
-echo '';
-} else {
-echo 'Huvo un error al insertar datos';
+	$agencia = $_POST['agencia'];
+	$email = $_POST['email'];
+	
+	$res = $serviciosReferencias->insertarAgencias($agencia,$email);
+	
+	if ((integer)$res > 0) {
+		$resUser = $serviciosReferencias->traerReferentes();
+		$cad = 'user';
+		while ($rowFS = mysql_fetch_array($resUser)) {
+			if (isset($_POST[$cad.$rowFS[0]])) {
+				$serviciosReferencias->insertarAgenciareferentes($res,$rowFS[0]);
+			}
+		}
+		echo '';
+	} else {
+		echo 'Huvo un error al insertar datos';
+	}
 }
-}
+
 function modificarAgencias($serviciosReferencias) {
-$id = $_POST['id'];
-$agencia = $_POST['agencia'];
-$email = $_POST['email'];
-$res = $serviciosReferencias->modificarAgencias($id,$agencia,$email);
-if ($res == true) {
-echo '';
-} else {
-echo 'Huvo un error al modificar datos';
+	$id = $_POST['id'];
+	$agencia = $_POST['agencia'];
+	$email = $_POST['email'];
+	
+	$res = $serviciosReferencias->modificarAgencias($id,$agencia,$email);
+	
+	if ($res == true) {
+		$serviciosReferencias->eliminarAgenciareferentesPorAgentes($id);
+		$resUser = $serviciosReferencias->traerReferentes();
+		$cad = 'user';
+		while ($rowFS = mysql_fetch_array($resUser)) {
+			if (isset($_POST[$cad.$rowFS[0]])) {
+				$serviciosReferencias->insertarAgenciareferentes($id,$rowFS[0]);
+			}
+		}
+		echo '';
+	} else {
+		echo 'Huvo un error al modificar datos';
+	}
 }
-}
+
+
 function eliminarAgencias($serviciosReferencias) {
 $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarAgencias($id);
@@ -291,10 +375,18 @@ function insertarClientes($serviciosReferencias) {
 	$honorarios = $_POST['honorarios'];
 	$minhonorarios = $_POST['minhonorarios'];
 	$gastos = $_POST['gastos'];
+	$email = $_POST['email'];
 	
-	$res = $serviciosReferencias->insertarClientes($razonsocial,$cuit,$honorarios,$minhonorarios,$gastos);
+	$res = $serviciosReferencias->insertarClientes($razonsocial,$cuit,$honorarios,$minhonorarios,$gastos,$email);
 	
 	if ((integer)$res > 0) {
+		$resUser = $serviciosReferencias->traerReferentes();
+		$cad = 'user';
+		while ($rowFS = mysql_fetch_array($resUser)) {
+			if (isset($_POST[$cad.$rowFS[0]])) {
+				$serviciosReferencias->insertarClientereferentes($res,$rowFS[0]);
+			}
+		}
 		echo '';
 	} else {
 		echo 'Huvo un error al insertar datos';
@@ -308,10 +400,19 @@ function modificarClientes($serviciosReferencias) {
 	$honorarios = $_POST['honorarios'];
 	$minhonorarios = $_POST['minhonorarios'];
 	$gastos = $_POST['gastos'];
+	$email = $_POST['email'];
 	
-	$res = $serviciosReferencias->modificarClientes($id,$razonsocial,$cuit,$honorarios,$minhonorarios,$gastos);
+	$res = $serviciosReferencias->modificarClientes($id,$razonsocial,$cuit,$honorarios,$minhonorarios,$gastos,$email);
 	
 	if ($res == true) {
+		$serviciosReferencias->eliminarClientereferentesPorCliente($id);
+		$resUser = $serviciosReferencias->traerReferentes();
+		$cad = 'user';
+		while ($rowFS = mysql_fetch_array($resUser)) {
+			if (isset($_POST[$cad.$rowFS[0]])) {
+				$serviciosReferencias->insertarClientereferentes($id,$rowFS[0]);
+			}
+		}
 		echo '';
 	} else {
 		echo 'Huvo un error al modificar datos';
@@ -422,6 +523,7 @@ function insertarExportaciones($serviciosReferencias) {
 	$tc = $_POST['tc'];
 	$gastos = $_POST['gastosaux'];
 	$honorarios = $_POST['honorariosaux'];
+	$honorarios = $_POST['minhonorariosaux'];
 
 	$clientes = $serviciosReferencias->traerClientesPorId($refclientes);
 	$valorunitario = mysql_result($clientes,0,'valorunitario');
@@ -430,7 +532,7 @@ function insertarExportaciones($serviciosReferencias) {
 	$lstItems = $_POST['tokenItem'];
 
 	
-	$res = $serviciosReferencias->insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc,$valorunitario,$refagencias,$gastos, $honorarios);
+	$res = $serviciosReferencias->insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc,$valorunitario,$refagencias,$gastos, $honorarios, $minhonorarios);
 	
 	if ((integer)$res > 0) {
 		for ($i=1; $i <=$lstContenedores ; $i++) {
@@ -482,8 +584,9 @@ function modificarExportaciones($serviciosReferencias) {
 	$gastos = $_POST['gastos'];
 	$honorarios = $_POST['honorarios'];
 	$valorunit = $_POST['valorunit'];
+	$honorarios = $_POST['minhonorariosaux'];
 
-	$res = $serviciosReferencias->modificarExportaciones($id,$refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc,$valorunit,$refagencias,$gastos, $honorarios);
+	$res = $serviciosReferencias->modificarExportaciones($id,$refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc,$valorunit,$refagencias,$gastos, $honorarios, $minhonorarios);
 
 	if ($res == true) {
 		echo '';

@@ -48,8 +48,8 @@ $tituloWeb = "Gestión: Despachante de Aduana";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbclientes";
 
-$lblCambio	 	= array("razonsocial","valorunitario");
-$lblreemplazo	= array("Razon Social","Valor Unit.");
+$lblCambio	 	= array("razonsocial","minhonorarios");
+$lblreemplazo	= array("Razon Social","Honorarios Min.");
 
 
 $cadRef 	= '';
@@ -60,6 +60,37 @@ $refCampo 	=  array();
 
 
 $formulario 	= $serviciosFunciones->camposTablaModificar($id, $idTabla, $modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+
+
+$lstAlbum	= $serviciosFunciones->devolverSelectBox($serviciosReferencias->traerReferentes(),array(1,2),' - ');
+$resContactos = $serviciosReferencias->traerReferentes();
+
+$resContactosCountries = $serviciosReferencias->traerClientereferentesPorCliente($id);
+
+
+	while ($subrow = mysql_fetch_array($resContactosCountries)) {
+			$arrayFS[] = $subrow;
+	}
+
+
+
+$cadUser = '<ul class="list-inline" id="lstContact">';
+while ($rowFS = mysql_fetch_array($resContactos)) {
+	$check = '';
+	if (mysql_num_rows($resContactosCountries)>0) {
+		foreach ($arrayFS as $item) {
+			if (stripslashes($item['refreferentes']) == $rowFS[0]) {
+				$check = 'checked';	
+				$cadUser = $cadUser.'<li class="user'.$rowFS[0].'">'.'<input id="user'.$rowFS[0].'" '.$check.' class="form-control checkLstContactos" type="checkbox" required="" style="width:50px;" name="user'.$rowFS[0].'"><p>'.$rowFS[1]." - ".$rowFS[2].'</p>'."</li>";
+			}
+		}
+	}
+	
+
+
+}
+
+$cadUser = $cadUser."</ul>";
 
 
 if ($_SESSION['refroll_predio'] != 1) {
@@ -98,6 +129,7 @@ if ($_SESSION['refroll_predio'] != 1) {
     
 	<!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../../css/chosen.css">
 	171
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
@@ -141,6 +173,31 @@ if ($_SESSION['refroll_predio'] != 1) {
         	
 			<div class="row">
 			<?php echo $formulario; ?>
+			<hr>
+            
+            <div class="row" id="contContacto" style="margin-left:0px; margin-right:25px;">
+            	<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+                    <label for="buscarcontacto" class="control-label" style="text-align:left">Buscar Referente</label>
+                    <div class="input-group col-md-12">
+                        
+                        <select data-placeholder="selecione el Referente..." id="buscarcontacto" name="buscarcontacto" class="chosen-select" tabindex="2" style="width:300px;">
+                            <option value=""></option>
+                            <?php echo ($lstAlbum); ?>
+                        </select>
+                        <button type="button" class="btn btn-success" id="asignarContacto"><span class="glyphicon glyphicon-share-alt"></span> Asignar Referente</button>
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-6">
+                    <label for="contactosasignados" class="control-label" style="text-align:left">Referentes Asignados</label>
+                    <div class="input-group col-md-12">
+                        <?php echo $cadUser; ?>
+                        
+                    </div>
+                </div>
+                
+            </div>
+
             </div>
             
             
@@ -196,7 +253,33 @@ if ($_SESSION['refroll_predio'] != 1) {
 <script type="text/javascript">
 $(document).ready(function(){
 	
-
+	$('#asignarContacto').click(function(e) {
+		if ($('#buscarcontacto').chosen().val() != '') {
+			if (existeAsiganado('user'+$('#buscarcontacto').chosen().val()) == 0) {
+				$('#lstContact').prepend('<li class="user'+ $('#buscarcontacto').chosen().val() +'"><input id="user'+ $('#buscarcontacto').chosen().val() +'" class="form-control checkLstContactos" checked type="checkbox" required="" style="width:50px;" name="user'+ $('#buscarcontacto').chosen().val() +'"><p>' + $('#buscarcontacto option:selected').html() + ' </p></li>');
+			}
+		}
+	});
+	
+	
+	function existeAsiganado(id) {
+		var existe = 0;	
+		$('#lstContact li input').each(function (index, value) { 
+		  if (id == $(this).attr('id')) {
+			return existe = 1;  
+		  }
+		});
+		
+		return existe;
+	}
+	
+	$("#lstContact").on("click",'.checkLstContactos', function(){
+		usersid =  $(this).attr("id");
+		
+		if  (!($(this).prop('checked'))) {
+			$('.'+usersid).remove();	
+		}
+	});
 	
 	$('.volver').click(function(event){
 		 
@@ -262,7 +345,9 @@ $(document).ready(function(){
 	
 	?>
 	
-	$('#valorunitario').number( true, 2, '.','' );
+	$('#minhonorarios').number( true, 2, '.','' );
+	$('#honorarios').number( true, 2, '.','' );
+	$('#gastos').number( true, 2, '.','' );
 
 	$('#cuit').number( true, 0, '','' );
 	$('#cuit').attr("maxlength",11);
@@ -342,6 +427,21 @@ $('.form_date').datetimepicker({
 	format: 'dd/mm/yyyy'
 });
 </script>
+<script src="../../js/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+	
+	
+  </script>
 <?php } ?>
 </body>
 </html>

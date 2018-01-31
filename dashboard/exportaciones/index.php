@@ -30,13 +30,10 @@ $resConfiguracion = $serviciosReferencias->traerConfiguracion();
 if (mysql_num_rows($resConfiguracion)>0) {
 	$despachador = mysql_result($resConfiguracion,0,'razonsocial');
 	$despachadorCUIT = mysql_result($resConfiguracion,0,'cuit');
-	$gastos = mysql_result($resConfiguracion,0,'gastos');
-	$honorarios = mysql_result($resConfiguracion,0,'honorarios');
+
 } else {
 	$despachador = '';
 	$despachadorCUIT = '';
-	$gastos =10;
-	$honorarios = 0;
 }
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
@@ -190,6 +187,7 @@ if ($_SESSION['refroll_predio'] != 1) {
 			<?php echo $formulario; ?>
 			<input type="hidden" name="gastosaux" id="gastosaux">
 			<input type="hidden" name="honorariosaux" id="honorariosaux">
+			<input type="hidden" name="honorariosaux" id="minhonorariosaux">
 
 				<br>
 				<div class="col-md-12" style="margin-top:25px;" id="lstContenedores">
@@ -273,20 +271,71 @@ $(document).ready(function(){
 	
 
 	$('#colapsarMenu').click();
-	$('#gastos').val(<?php echo $gastos; ?>);
-	$('#honorarios').val(<?php echo $honorarios; ?>);
-	$('#gastosaux').val(<?php echo $gastos; ?>);
-	$('#honorariosaux').val(<?php echo $honorarios; ?>);
+
 
 	$('#cuit').val('<?php echo $despachadorCUIT; ?>');
 	$('#despachante').val('<?php echo $despachador; ?>');
 
 	$('#gastos').prop("disabled",true);
 	$('#honorarios').prop("disabled",true);
+	$('#minhonorarios').prop("disabled",true);
 	
 	
+	function traerGral(id,accion,contenedor,leyenda,valor) {
+		if (id != '') {
+			$.ajax({
+				data:  {id: id, accion: accion},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+					$('#refpuertos').html('');	
+					$('#refdestinos').val('');
+				},
+				success:  function (response) {
+					if (valor == 1) {
+						if (response == '') {
+							$('#'+contenedor).append(leyenda);
+						} else {
+							$('#'+contenedor).append(response);
+						}
+					} else {
+						if (response == '') {
+							$('#'+contenedor).val(leyenda);
+						} else {
+							$('#'+contenedor).val(response);
+						}
+					}
+					
+						
+				}
+			});
+		}
+	}
+
+	traerGral($('#refdestinos').val(), 'traerPuertosPorDestino','refpuertos','<option>-- No existen puertos cargados --</option>',1);
+	traerGral($('#refclientes').val(), 'traerGastosPorCliente','gastos','0',2);
+	traerGral($('#refclientes').val(), 'traerGastosPorCliente','gastosaux','0',2);
+	traerGral($('#refclientes').val(), 'traerHonorariosPorCliente','honorarios','0',2);
+	traerGral($('#refclientes').val(), 'traerHonorariosPorCliente','honorariosaux','0',2);
+	traerGral($('#refclientes').val(), 'traerHonorariosMinimosPorCliente','minhonorarios','0',2);
+	traerGral($('#refclientes').val(), 'traerHonorariosMinimosPorCliente','minhonorariosaux','0',2);
+
+	$('#refdestinos').change(function() {
+		traerGral($(this).val(), 'traerPuertosPorDestino','refpuertos','<option>-- No existen puertos cargados --</option>',1);
+	});
 	
-	
+	$('#refclientes').change(function() {
+		traerGral($(this).val(), 'traerGastosPorCliente','gastos','0',2);
+		traerGral($(this).val(), 'traerGastosPorCliente','gastosaux','0',2);
+		traerGral($(this).val(), 'traerHonorariosPorCliente','honorarios','0',2);
+		traerGral($(this).val(), 'traerHonorariosPorCliente','honorariosaux','0',2);
+		traerGral($(this).val(), 'traerHonorariosMinimosPorCliente','minhonorarios','0',2);
+		traerGral($(this).val(), 'traerHonorariosMinimosPorCliente','minhonorariosaux','0',2);
+	});
+
+
+
+
 	var table = $('#example').dataTable({
 		"order": [[ 0, "asc" ]],
 		"language": {

@@ -48,14 +48,15 @@ $tituloWeb = "Gestión: Despachador de Aduana";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "tbpuertos";
 
-$lblCambio	 	= array();
-$lblreemplazo	= array();
+$lblCambio	 	= array("refdestinos");
+$lblreemplazo	= array("Destinos");
 
 
-$cadRef 	= '';
+$resVar		= $serviciosReferencias->traerDestinos();
+$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1),'',mysql_result($resResultado,0,'refdestinos'));
 
-$refdescripcion = array();
-$refCampo 	=  array();
+$refdescripcion = array(0=>$cadRef);
+$refCampo 	=  array("refdestinos");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 

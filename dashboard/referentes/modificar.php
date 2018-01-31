@@ -22,31 +22,31 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Canales",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Referentes",$_SESSION['refroll_predio'],'');
 
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerColoresPorId($id);
+$resResultado = $serviciosReferencias->traerReferentesPorId($id);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Canal";
+$singular = "Referente";
 
-$plural = "Canales";
+$plural = "Referentes";
 
-$eliminar = "eliminarColores";
+$eliminar = "eliminarReferentes";
 
-$modificar = "modificarColores";
+$modificar = "modificarReferentes";
 
-$idTabla = "idcolor";
+$idTabla = "idreferente";
 
 $tituloWeb = "Gestión: Despachante de Aduana";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "tbcolores";
+$tabla 			= "tbreferentes";
 
 $lblCambio	 	= array();
 $lblreemplazo	= array();

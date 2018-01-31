@@ -55,7 +55,7 @@ $refCampo 	=  array();
 
 
 /////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
-$cabeceras 		= "	<th>Agencia</th>";
+$cabeceras 		= "	<th>Agencia</th><th>Email</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -64,8 +64,9 @@ $cabeceras 		= "	<th>Agencia</th>";
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerAgencias(),1);
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerAgencias(),2);
 
+$lstReferentes		= $serviciosFunciones->devolverSelectBox($serviciosReferencias->traerReferentes(),array(1,2),' - ');
 
 
 if ($_SESSION['refroll_predio'] != 1) {
@@ -108,6 +109,7 @@ if ($_SESSION['refroll_predio'] != 1) {
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
+	<link rel="stylesheet" href="../../css/chosen.css">
 	
     
    
@@ -122,72 +124,11 @@ if ($_SESSION['refroll_predio'] != 1) {
       });
     </script>
     
-    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzxyoH5wuPmahQIZLUBjPfDuu_cUHUBQY"
-  type="text/javascript"></script>
-    <style type="text/css">
-		#map
-		{
-			width: 100%;
-			height: 600px;
-			border: 1px solid #d0d0d0;
-		}
-  
-		
-	</style>
-    <script>
-	/* AIzaSyBzxyoH5wuPmahQIZLUBjPfDuu_cUHUBQY */
-		var map;
-		var markers = [];
-	 function localize() {
-
-			
-		var mapDiv = document.getElementById('map');
-		var laPlata= {lat: -34.9205283, lng: -57.9531703};
-		var map = new google.maps.Map(mapDiv, {
-			zoom: 13,
-			center: new google.maps.LatLng(-34.9205283, -57.9531703)
-		});
-		
-		//var latitud = map.coords.latitude;
-		//var longitud = map.coords.longitude;
-		/*
-		google.maps.event.addDomListener(mapDiv, 'click', function(e) {
-			window.alert('click en el mapa');
-		});
-		*/
-		map.addListener('click', function(e) {
-			
-			if (markers.length > 0) {
-				clearMarkers();
-			}
-			$('#latitud').val(e.latLng.lat());
-			$('#longitud').val(e.latLng.lng());	
-			placeMarkerAndPanTo(e.latLng, map);
-		});
-	 }
-	 
-		function placeMarkerAndPanTo(latLng, map) {
-			var marker = new google.maps.Marker({
-				position: latLng,
-				map: map
-			});
-			markers.push(marker);
-			map.panTo(latLng);
-			
-		}
-	
-	function clearMarkers() {
-		for (var i = 0; i < markers.length; i++) {
-			markers[i].setMap(null);
-		}
-	}
-		
-
- </script>-->
+   
  
 </head>
 
-<body onLoad="localize()">
+<body>
 
  <?php echo $resMenu; ?>
 
@@ -204,6 +145,33 @@ if ($_SESSION['refroll_predio'] != 1) {
         	<form class="form-inline formulario" role="form">
         	<div class="row">
 			<?php echo $formulario; ?>
+
+
+			<div class="row" id="contContacto" style="margin-left:0px; margin-right:25px;">
+            	<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+                    <label for="buscarcontacto" class="control-label" style="text-align:left">Buscar Referente</label>
+                    <div class="input-group col-md-12">
+                        
+                        <select data-placeholder="selecione el Referente..." id="buscarreferente" name="buscarreferente" class="chosen-select" tabindex="2" style="width:300px;">
+                            <option value=""></option>
+                            <?php echo utf8_decode($lstReferentes); ?>
+                        </select>
+                        <button type="button" class="btn btn-success" id="asignarContacto"><span class="glyphicon glyphicon-share-alt"></span> Asignar Referente</button>
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-6">
+                    <label for="contactosasignados" class="control-label" style="text-align:left">Referentes Asignados</label>
+                    <div class="input-group col-md-12">
+                        <ul class="list-inline" id="lstContact">
+                        
+                        </ul>
+                        
+                    </div>
+                </div>
+                
+            </div>
+
             </div>
             <!--
             <div class="row">
@@ -272,6 +240,34 @@ if ($_SESSION['refroll_predio'] != 1) {
 $(document).ready(function(){
 	
 	$('#activo').prop('checked', true);
+
+	$('#asignarContacto').click(function(e) {
+		//alert($('#buscarcontacto option:selected').html());
+		if ($('#buscarreferente').chosen().val() != '') {
+			if (existeAsiganado('user'+$('#buscarreferente').chosen().val()) == 0) {
+				$('#lstContact').prepend('<li class="user'+ $('#buscarreferente').chosen().val() +'"><input id="user'+ $('#buscarreferente').chosen().val() +'" class="form-control checkLstContactos" checked type="checkbox" required="" style="width:50px;" name="user'+ $('#buscarreferente').chosen().val() +'"><p>' + $('#buscarreferente option:selected').html() + ' </p></li>');
+			}
+		}
+	});
+	
+	function existeAsiganado(id) {
+		var existe = 0;	
+		$('#lstContact li input').each(function (index, value) { 
+		  if (id == $(this).attr('id')) {
+			return existe = 1;  
+		  }
+		});
+		
+		return existe;
+	}
+	
+	$("#lstContact").on("click",'.checkLstContactos', function(){
+		usersid =  $(this).attr("id");
+		
+		if  (!($(this).prop('checked'))) {
+			$('.'+usersid).remove();	
+		}
+	});
 	
 	
 	var table = $('#example').dataTable({
@@ -453,6 +449,21 @@ $('.form_date').datetimepicker({
 	format: 'dd/mm/yyyy'
 });
 </script>
+<script src="../../js/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+	
+	
+  </script>
 <?php } ?>
 </body>
 </html>

@@ -114,7 +114,7 @@ $ajaxFuncionesController = '';
 
 $servicios	= "Referencias";
 
-$sqlMapaer	= "SHOW FULL TABLES FROM exportador";
+$sqlMapaer	= "SHOW FULL TABLES FROM exportacion";
 $resMapeo 	=	query($sqlMapaer,0);
 
 $aliasTablaMadre = '';
