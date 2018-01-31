@@ -93,7 +93,8 @@ $cabeceras 		= "	<th>Permiso Emb.</th>
 					<th>Canales</th>
 					<th>Booking</th>
 					<th>Fecha</th>
-					<th>Fact.</th>";
+					<th>Fact.</th>
+					<th>Honorarios</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -102,7 +103,7 @@ $cabeceras 		= "	<th>Permiso Emb.</th>
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerExportacionesGrid(),9);
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerExportacionesGrid(),96);
 
 $resMercaderias = $serviciosReferencias->traerMercaderias();
 $cadMercaderia 	= $serviciosFunciones->devolverSelectBoxObligatorio($resMercaderias,array(1),'');
@@ -187,7 +188,7 @@ if ($_SESSION['refroll_predio'] != 1) {
 			<?php echo $formulario; ?>
 			<input type="hidden" name="gastosaux" id="gastosaux">
 			<input type="hidden" name="honorariosaux" id="honorariosaux">
-			<input type="hidden" name="honorariosaux" id="minhonorariosaux">
+			<input type="hidden" name="minhonorariosaux" id="minhonorariosaux">
 
 				<br>
 				<div class="col-md-12" style="margin-top:25px;" id="lstContenedores">
@@ -255,9 +256,31 @@ if ($_SESSION['refroll_predio'] != 1) {
         	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
             ¿Esta seguro que desea eliminar el <?php echo $singular; ?>?.<span id="proveedorEli"></span>
         </p>
-        <p><strong>Importante: </strong>Si elimina el <?php echo $singular; ?> se perderan todos los datos de este</p>
+        <p><strong>Importante: </strong>Si elimina el Permiso de Embarque se perderan todos los datos de este</p>
         <input type="hidden" value="" id="idEliminar" name="idEliminar">
 </div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="1" style="z-index:500000;" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document" style="width:90%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Detalle del Permiso de Embarque</h4>
+      </div>
+      <div class="modal-body detallePermiso">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
 <script src="../../bootstrap/js/dataTables.bootstrap.js"></script>
 
@@ -271,6 +294,25 @@ $(document).ready(function(){
 	
 
 	$('#colapsarMenu').click();
+
+	function traerDetallePermisoDeEmbarque(id) {
+		$.ajax({
+			data:  {id: id, 
+					accion: 'traerDetallePermisoDeEmbarque'},
+			url:   '../../ajax/ajax.php',
+			type:  'post',
+			beforeSend: function () {
+
+			},
+			success:  function (response) {
+				
+				$('.detallePermiso').html(response);
+					
+			}
+		});
+	}
+
+
 
 
 	$('#cuit').val('<?php echo $despachadorCUIT; ?>');
@@ -288,8 +330,11 @@ $(document).ready(function(){
 				url:   '../../ajax/ajax.php',
 				type:  'post',
 				beforeSend: function () {
-					$('#refpuertos').html('');	
-					$('#refdestinos').val('');
+					if (valor == 1) {
+						$('#refpuertos').html('');
+					} else {
+						$('#'+contenedor+'aux').val(0);
+					}
 				},
 				success:  function (response) {
 					if (valor == 1) {
@@ -303,6 +348,7 @@ $(document).ready(function(){
 							$('#'+contenedor).val(leyenda);
 						} else {
 							$('#'+contenedor).val(response);
+							$('#'+contenedor+'aux').val(response);
 						}
 					}
 					
@@ -313,6 +359,13 @@ $(document).ready(function(){
 	}
 
 	traerGral($('#refdestinos').val(), 'traerPuertosPorDestino','refpuertos','<option>-- No existen puertos cargados --</option>',1);
+	
+	$('#refdestinos').change(function() {
+		var id = $(this).val();
+		traerGral(id, 'traerPuertosPorDestino','refpuertos','<option>-- No existen puertos cargados --</option>',1);
+	});
+
+
 	traerGral($('#refclientes').val(), 'traerGastosPorCliente','gastos','0',2);
 	traerGral($('#refclientes').val(), 'traerGastosPorCliente','gastosaux','0',2);
 	traerGral($('#refclientes').val(), 'traerHonorariosPorCliente','honorarios','0',2);
@@ -320,17 +373,16 @@ $(document).ready(function(){
 	traerGral($('#refclientes').val(), 'traerHonorariosMinimosPorCliente','minhonorarios','0',2);
 	traerGral($('#refclientes').val(), 'traerHonorariosMinimosPorCliente','minhonorariosaux','0',2);
 
-	$('#refdestinos').change(function() {
-		traerGral($(this).val(), 'traerPuertosPorDestino','refpuertos','<option>-- No existen puertos cargados --</option>',1);
-	});
+	
 	
 	$('#refclientes').change(function() {
-		traerGral($(this).val(), 'traerGastosPorCliente','gastos','0',2);
-		traerGral($(this).val(), 'traerGastosPorCliente','gastosaux','0',2);
-		traerGral($(this).val(), 'traerHonorariosPorCliente','honorarios','0',2);
-		traerGral($(this).val(), 'traerHonorariosPorCliente','honorariosaux','0',2);
-		traerGral($(this).val(), 'traerHonorariosMinimosPorCliente','minhonorarios','0',2);
-		traerGral($(this).val(), 'traerHonorariosMinimosPorCliente','minhonorariosaux','0',2);
+		var id = $(this).val();
+		traerGral(id, 'traerGastosPorCliente','gastos','0',2);
+		traerGral(id, 'traerGastosPorCliente','gastosaux','0',2);
+		traerGral(id, 'traerHonorariosPorCliente','honorarios','0',2);
+		traerGral(id, 'traerHonorariosPorCliente','honorariosaux','0',2);
+		traerGral(id, 'traerHonorariosMinimosPorCliente','minhonorarios','0',2);
+		traerGral(id, 'traerHonorariosMinimosPorCliente','minhonorariosaux','0',2);
 	});
 
 
@@ -520,6 +572,16 @@ $(document).ready(function(){
 			alert("Error, vuelva a realizar la acción.");	
 		  }
 	});//fin del boton eliminar
+
+
+	$("#example").on("click",'.vardetalle', function(){
+		  usersid =  $(this).attr("id");
+		  if (!isNaN(usersid)) {
+			traerDetallePermisoDeEmbarque(usersid);
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton detalle
 
 
 	$("#lstContenedores").on("click",'.eliminarContenedor', function(){

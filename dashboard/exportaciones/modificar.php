@@ -48,8 +48,8 @@ $tituloWeb = "Gestión: Despachante de Aduana";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbexportaciones";
 
-$lblCambio	 	= array("refclientes","refbuques","refpuertos","refdestinos","refcolores",'permisoembarque');
-$lblreemplazo	= array("Clientes","Buques","Puertos","Destinos","Canales",'Permiso de Embarque');
+$lblCambio	 	= array("refclientes","refbuques","refpuertos","refdestinos","refcolores",'permisoembarque',"refagencias");
+$lblreemplazo	= array("Clientes","Buques","Puertos","Destinos","Canales",'Permiso de Embarque','Agencias');
 
 
 $resClientes 	= $serviciosReferencias->traerClientes();
@@ -69,9 +69,12 @@ $cadRef5 	= $serviciosFunciones->devolverSelectBoxActivo($resDestinos,array(1),'
 $resColores 	= $serviciosReferencias->traerColores();
 $cadRef6 	= $serviciosFunciones->devolverSelectBoxActivo($resColores,array(1),'', mysql_result($resResultado,0,'refcolores'));
 
+$resAgencias 	= $serviciosReferencias->traerAgencias();
+$cadRef7 	= $serviciosFunciones->devolverSelectBoxActivo($resAgencias,array(1),'', mysql_result($resResultado,0,'refagencias'));
+
 //die(var_dump($cadRef3));
-$refdescripcion = array(0 => $cadRef,1 => $cadRef2,2 => $cadRef3,3 => $cadRef5,4 => $cadRef6);
-$refCampo 	=  array("refclientes","refbuques","refpuertos","refdestinos","refcolores");
+$refdescripcion = array(0 => $cadRef,1 => $cadRef2,2 => $cadRef3,3 => $cadRef5,4 => $cadRef6, 5 => $cadRef7);
+$refCampo 	=  array("refclientes","refbuques","refpuertos","refdestinos","refcolores","refagencias");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -278,7 +281,57 @@ $formularioContenedor 	= $serviciosFunciones->camposTabla("insertarExportacionco
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	function traerGral(id,accion,contenedor,leyenda,valor) {
+		if (id != '') {
+			$.ajax({
+				data:  {id: id, accion: accion},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+					if (valor == 1) {
+						$('#refpuertos').html('');
+					} else {
+						$('#'+contenedor+'aux').val(0);
+					}
+				},
+				success:  function (response) {
+					if (valor == 1) {
+						if (response == '') {
+							$('#'+contenedor).append(leyenda);
+						} else {
+							$('#'+contenedor).append(response);
+						}
+					} else {
+						if (response == '') {
+							$('#'+contenedor).val(leyenda);
+						} else {
+							$('#'+contenedor).val(response);
+							$('#'+contenedor+'aux').val(response);
+						}
+					}
+					
+						
+				}
+			});
+		}
+	}
 
+	
+	$('#refdestinos').change(function() {
+		var id = $(this).val();
+		traerGral(id, 'traerPuertosPorDestino','refpuertos','<option>-- No existen puertos cargados --</option>',1);
+	});
+	
+	
+	$('#refclientes').change(function() {
+		var id = $(this).val();
+		traerGral(id, 'traerGastosPorCliente','gastos','0',2);
+		traerGral(id, 'traerGastosPorCliente','gastosaux','0',2);
+		traerGral(id, 'traerHonorariosPorCliente','honorarios','0',2);
+		traerGral(id, 'traerHonorariosPorCliente','honorariosaux','0',2);
+		traerGral(id, 'traerHonorariosMinimosPorCliente','minhonorarios','0',2);
+		traerGral(id, 'traerHonorariosMinimosPorCliente','minhonorariosaux','0',2);
+	});
 	
 	$('.volver').click(function(event){
 		 

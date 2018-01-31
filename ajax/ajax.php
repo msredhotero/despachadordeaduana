@@ -195,12 +195,94 @@ case 'traerHonorariosPorCliente':
 case 'traerHonorariosMinimosPorCliente':
 	traerHonorariosMinimosPorCliente($serviciosReferencias, $serviciosFunciones);
 	break;
+
+case 'traerDetallePermisoDeEmbarque':
+	traerDetallePermisoDeEmbarque($serviciosReferencias);
+	break;
 /* Fin */
 ////////////////////////////////*****    FIN   *******/////////////////////////////////////
 
 }
 
 /* Fin */
+
+function traerDetallePermisoDeEmbarque($ServiciosReferencias) {
+	$id = $_POST['id'];
+
+	$res = $ServiciosReferencias->rptExportacionesCompletoPorId($id);
+
+	$cad = "<table class='table table-responsive table-striped'>";
+	$primero = 0;
+	$contenedor = '';
+
+	$fob = 0;
+	$neto = 0;
+	$bruto = 0;
+	$bultos = 0;
+	$tara = 0;
+
+	while ($row = mysql_fetch_array($res))	{
+		if ($contenedor != $row['contenedor']) {
+			$cad .= "
+				<thead>
+					<tr>
+						<th colspan='2' style='background-color:#FF5733;'>Contenedor</th>
+						<th colspan='2' style='background-color:#FF5733;'>Tara</th>
+						<th colspan='3' style='background-color:#FF5733;'>Precinto</th>
+					</tr>
+					<tr>
+						<td colspan='2'>".$row['contenedor']."</td>
+						<td colspan='2'>".$row['tara']."</td>
+						<td colspan='3'>".$row['precinto']."</td>
+					</tr>
+				</thead>
+				<thead>
+					<th style='background-color:#FF5733;'>Bulto</th>
+					<th style='background-color:#FF5733;'>Bruto</th>
+					<th style='background-color:#FF5733;'>Neto</th>
+					<th style='background-color:#FF5733;'>Marca</th>
+					<th style='background-color:#FF5733;'>Mercaderia</th>
+					<th style='background-color:#FF5733;'>Valor Unit.</th>
+					<th style='background-color:#FF5733;'>FOB</th>
+				</thead>
+				<tbody>";
+			$contenedor = $row['contenedor'];
+			$tara += $row['tara'];
+		}
+		$cad .= "<tr>
+					<td>".$row['bulto']."</td>
+					<td>".$row['bruto']."</td>
+					<td>".$row['neto']."</td>
+					<td>".$row['marca']."</td>
+					<td>".$row['mercaderia']."</td>
+					<td>".$row['valorunitario']."</td>
+					<td>".($row['neto'] * $row['valorunitario'])."</td>
+				</tr>";
+		$fob += ($row['neto'] * $row['valorunitario']);
+		$neto += $row['neto'];
+		$bruto += $row['bruto'];
+		$bultos += $row['bulto'];
+	}
+
+	$cad .= "<tfoot>
+				<tr>
+					<th colspan='7' style='background-color:#C70039;'>Totales</th>
+				</tr>
+				<tr>
+					<th>".$bultos."</th>
+					<th>".($bruto + $tara)." + (Tara)</th>
+					<th>".$neto."</th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th>".$fob."</th>
+				</tr>
+			</tfoot>
+			";
+	$cad .= "</tbody></table>";
+
+	echo $cad;	
+}
 
 function traerPuertosPorDestino($serviciosReferencias, $serviciosFunciones) {
 	$iddestino = $_POST['id'];
@@ -523,16 +605,13 @@ function insertarExportaciones($serviciosReferencias) {
 	$tc = $_POST['tc'];
 	$gastos = $_POST['gastosaux'];
 	$honorarios = $_POST['honorariosaux'];
-	$honorarios = $_POST['minhonorariosaux'];
-
-	$clientes = $serviciosReferencias->traerClientesPorId($refclientes);
-	$valorunitario = mysql_result($clientes,0,'valorunitario');
+	$minhonorarios = $_POST['minhonorariosaux'];
 
 	$lstContenedores = $_POST['tokenContenedor'];
 	$lstItems = $_POST['tokenItem'];
 
 	
-	$res = $serviciosReferencias->insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc,$valorunitario,$refagencias,$gastos, $honorarios, $minhonorarios);
+	$res = $serviciosReferencias->insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc,$refagencias,$gastos, $honorarios, $minhonorarios);
 	
 	if ((integer)$res > 0) {
 		for ($i=1; $i <=$lstContenedores ; $i++) {
@@ -583,10 +662,9 @@ function modificarExportaciones($serviciosReferencias) {
 	$tc = $_POST['tc'];
 	$gastos = $_POST['gastos'];
 	$honorarios = $_POST['honorarios'];
-	$valorunit = $_POST['valorunit'];
-	$honorarios = $_POST['minhonorariosaux'];
+	$honorarios = $_POST['minhonorarios'];
 
-	$res = $serviciosReferencias->modificarExportaciones($id,$refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc,$valorunit,$refagencias,$gastos, $honorarios, $minhonorarios);
+	$res = $serviciosReferencias->modificarExportaciones($id,$refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc,$refagencias,$gastos, $honorarios, $minhonorarios);
 
 	if ($res == true) {
 		echo '';

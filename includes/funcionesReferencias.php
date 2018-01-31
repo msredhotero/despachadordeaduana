@@ -530,18 +530,18 @@ return $res;
 
 /* PARA Exportaciones */
 
-function insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc, $valorunit, $refagencias, $gastos, $honorarios, $minhonorarios) {
-$sql = "insert into dbexportaciones(idexportacion,refclientes,refbuques,refcolores,refdestinos,refpuertos,permisoembarque,booking,despachante,cuit,fecha,factura,tc,valorunit, fechamodi,refagencias, gastos, honorarios, minhonorarios)
-values ('',".$refclientes.",".$refbuques.",".$refcolores.",".$refdestinos.",".$refpuertos.",'".($permisoembarque)."','".($booking)."','".($despachante)."','".($cuit)."','".($fecha)."','".($factura)."',".($tc == '' ? 0 : $tc).",".($valorunit == '' ? 0 : $valorunit).", now(), ".$refagencias.", ".($gastos == '' ? 0 : $gastos).", ".($honorarios == '' ? 0 : $honorarios).", ".($minhonorarios == '' ? 0 : $minhonorarios).")";
+function insertarExportaciones($refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc, $refagencias, $gastos, $honorarios, $minhonorarios) {
+$sql = "insert into dbexportaciones(idexportacion,refclientes,refbuques,refcolores,refdestinos,refpuertos,permisoembarque,booking,despachante,cuit,fecha,factura,tc, fechamodi,refagencias, gastos, honorarios, minhonorarios)
+values ('',".$refclientes.",".$refbuques.",".$refcolores.",".$refdestinos.",".$refpuertos.",'".($permisoembarque)."','".($booking)."','".($despachante)."','".($cuit)."','".($fecha)."','".($factura)."',".($tc == '' ? 0 : $tc).", now(), ".$refagencias.", ".($gastos == '' ? 0 : $gastos).", ".($honorarios == '' ? 0 : $honorarios).", ".($minhonorarios == '' ? 0 : $minhonorarios).")";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarExportaciones($id,$refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc, $valorunit, $refagencias, $gastos, $honorarios, $minhonorarios) {
+function modificarExportaciones($id,$refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc, $refagencias, $gastos, $honorarios, $minhonorarios) {
 $sql = "update dbexportaciones
 set
-refclientes = ".$refclientes.",refbuques = ".$refbuques.",refcolores = ".$refcolores.",refdestinos = ".$refdestinos.",refpuertos = ".$refpuertos.",permisoembarque = '".($permisoembarque)."',booking = '".($booking)."',despachante = '".($despachante)."',cuit = '".($cuit)."',fecha = '".($fecha)."',factura = '".($factura)."', tc = ".($tc == '' ? 0 : $tc).", valorunit = ".($valorunit == '' ? 0 : $valorunit).", fechamodi = now(), refagencias = ".$refagencias.", gastos = ".$gastos.", honorarios = ".$honorarios.", minhonorarios = ".$minhonorarios."
+refclientes = ".$refclientes.",refbuques = ".$refbuques.",refcolores = ".$refcolores.",refdestinos = ".$refdestinos.",refpuertos = ".$refpuertos.",permisoembarque = '".($permisoembarque)."',booking = '".($booking)."',despachante = '".($despachante)."',cuit = '".($cuit)."',fecha = '".($fecha)."',factura = '".($factura)."', tc = ".($tc == '' ? 0 : $tc).", fechamodi = now(), refagencias = ".$refagencias.", gastos = ".$gastos.", honorarios = ".$honorarios.", minhonorarios = ".$minhonorarios."
 where idexportacion =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -594,7 +594,6 @@ e.cuit,
 e.fecha,
 e.factura,
 e.tc,
-e.valorunit,
 e.refagencias,
 e.gastos,
 e.honorarios,
@@ -612,37 +611,77 @@ return $res;
 
 function traerExportacionesGrid() {
 	$sql = "select
-				e.idexportacion,
-				e.permisoembarque,
-				cli.razonsocial,
-				buq.nombre as buque,
-				des.destino,
-				pue.puerto,
-				colo.color,
-				e.booking,
-				e.fecha,
-				e.factura,
-				e.despachante,
-				e.cuit,
-				e.refclientes,
-				e.refbuques,
-				e.refcolores,
-				e.refdestinos,
-				e.refpuertos,
-				e.tc,
-				e.valorunit,
-				ag.agencia,
-				e.gastos,
-				e.honorarios,
-				e.minhonorarios
-			from dbexportaciones e
-			inner join dbclientes cli ON cli.idcliente = e.refclientes
-			inner join tbbuques buq ON buq.idbuque = e.refbuques
-			inner join tbcolores colo ON colo.idcolor = e.refcolores
-			inner join tbdestinos des ON des.iddestino = e.refdestinos
-			inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
-			inner join tbagencias ag ON ag.idagencia = e.refagencias
-			order by 1";
+		t.idexportacion,
+		t.permisoembarque,
+		t.razonsocial,
+		t.buque,
+		t.destino,
+		t.puerto,
+		t.color,
+		t.booking,
+		t.fecha,
+		t.factura,
+        round(sum(t.honorariosFinal),2) as honorariosFinal,
+		round((sum(t.bruto) + t.tara),2) as brutototal,
+		round(sum(t.fob),2) as fob,
+		round(sum(t.fobpesos),2) as fobpesos
+		
+				from	(
+						select
+								e.idexportacion,
+								e.permisoembarque,
+								cli.razonsocial,
+								buq.nombre as buque,
+								des.destino,
+								pue.puerto,
+								colo.color,
+								e.booking,
+								e.fecha,
+								e.factura,
+                                ec.tara,
+                                sum(ed.bruto) as bruto,
+                                sum(ed.neto) * ed.valorunitario as fob,
+                                sum(ed.neto) * ed.valorunitario * e.tc as fobpesos,
+                                (case when sum(ed.neto) * ed.valorunitario * e.tc <= e.minhonorarios 
+									then e.minhonorarios + e.gastos
+                                    else (sum(ed.neto) * ed.valorunitario * e.tc) * e.honorarios / 100 end) as honorariosFinal
+							from dbexportaciones e
+				            inner join dbexportacioncontenedores ec ON e.idexportacion = ec.refexportaciones
+				            inner join dbexportaciondetalles ed ON ed.refexportacioncontenedores = ec.idexportacioncontenedor
+							inner join dbclientes cli ON cli.idcliente = e.refclientes
+							inner join tbbuques buq ON buq.idbuque = e.refbuques
+							inner join tbcolores colo ON colo.idcolor = e.refcolores
+							inner join tbdestinos des ON des.iddestino = e.refdestinos
+							inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
+							inner join tbagencias ag ON ag.idagencia = e.refagencias
+				            group by e.idexportacion,
+								e.permisoembarque,
+								cli.razonsocial,
+								buq.nombre,
+								des.destino,
+								pue.puerto,
+								colo.color,
+								e.booking,
+								e.fecha,
+								e.factura,
+                                ed.valorunitario,
+                                e.minhonorarios,
+                                e.gastos,
+                                ec.tara,
+                                e.honorarios
+							) as t
+				group by t.idexportacion,
+		t.permisoembarque,
+		t.razonsocial,
+		t.buque,
+		t.destino,
+		t.puerto,
+		t.color,
+		t.booking,
+		t.fecha,
+        t.tara,
+		t.factura            
+				order by t.fecha desc";
 			$res = $this->query($sql,0);
 			return $res;
 }
@@ -668,7 +707,6 @@ function traerExportacionesPorIdReporte($id) {
 				e.refdestinos,
 				e.refpuertos,
 				e.tc,
-				e.valorunit,
 				ag.agencia,
 				e.gastos,
 				e.honorarios,
@@ -685,6 +723,138 @@ function traerExportacionesPorIdReporte($id) {
 			$res = $this->query($sql,0);
 			return $res;
 }
+
+function rptExportacionesCompletoPorId($id) {
+	$sql = "select
+				t.idexportacion,
+				t.permisoembarque,
+				t.razonsocial,
+				t.buque,
+				t.destino,
+				t.puerto,
+				t.color,
+				t.booking,
+				t.fecha,
+				t.factura,
+				t.despachante,
+				t.cuit,
+				t.refclientes,
+				t.refbuques,
+				t.refcolores,
+				t.refdestinos,
+				t.refpuertos,
+				t.tc,
+				sum(t.tara) as tara,
+				sum(t.bulto) as bulto,
+				sum(t.bruto) as bruto,
+				sum(t.neto) as neto,
+				sum(t.cantidad) as cantidad,
+				t.valorunitario,
+                t.contenedor,
+				t.precinto,
+				t.agencia,
+				t.gastos,
+				t.honorarios,
+				t.minhonorarios,
+				t.mercaderia,
+				t.marca
+				from	(
+						select
+								e.idexportacion,
+								e.permisoembarque,
+								cli.razonsocial,
+								buq.nombre as buque,
+								des.destino,
+								pue.puerto,
+								colo.color,
+								e.booking,
+								e.fecha,
+								e.factura,
+								e.despachante,
+								e.cuit,
+								e.refclientes,
+								e.refbuques,
+								e.refcolores,
+								e.refdestinos,
+								e.refpuertos,
+								e.tc,
+				                ec.tara,
+				                ec.contenedor,
+                                ec.precinto,
+				                sum(ed.bulto) as bulto,
+				                sum(ed.bruto) as bruto,
+				                sum(ed.neto) as neto,
+				                count(ed.idexportaciondetalle) as cantidad,
+				                ed.valorunitario as valorunitario,
+				                ag.agencia,
+				                e.gastos,
+				                e.honorarios,
+				                e.minhonorarios,
+				                mer.nombre as mercaderia,
+				                ed.marca
+							from dbexportaciones e
+				            inner join dbexportacioncontenedores ec ON e.idexportacion = ec.refexportaciones
+				            inner join dbexportaciondetalles ed ON ed.refexportacioncontenedores = ec.idexportacioncontenedor
+							inner join dbclientes cli ON cli.idcliente = e.refclientes
+							inner join tbbuques buq ON buq.idbuque = e.refbuques
+							inner join tbcolores colo ON colo.idcolor = e.refcolores
+							inner join tbdestinos des ON des.iddestino = e.refdestinos
+							inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
+							inner join tbagencias ag ON ag.idagencia = e.refagencias
+							inner join tbmercaderias mer ON mer.idmercaderia = ed.refmercaderias
+				            where e.idexportacion = '".$id."'
+				            group by e.idexportacion,e.permisoembarque,
+								cli.razonsocial,buq.nombre,
+								des.destino,pue.puerto,
+								colo.color,	e.booking,
+								e.fecha,e.factura,
+								e.despachante,e.cuit,
+								e.refclientes,e.refbuques,
+								e.refcolores,e.refdestinos,
+								e.refpuertos,e.tc,
+				                ec.tara,
+				                ed.valorunitario,
+				                ec.contenedor,
+                                ec.precinto,
+                                ag.agencia,
+                                e.gastos,
+                                e.honorarios,
+                                e.minhonorarios,
+                                mer.nombre,
+				                ed.marca
+							) as t
+				            group by t.idexportacion,
+				t.permisoembarque,
+				t.razonsocial,
+				t.buque,
+				t.destino,
+				t.puerto,
+				t.color,
+				t.booking,
+				t.fecha,
+				t.factura,
+				t.despachante,
+				t.cuit,
+				t.refclientes,
+				t.refbuques,
+				t.refcolores,
+				t.refdestinos,
+				t.refpuertos,
+				t.tc ,
+				t.valorunitario,
+                t.contenedor,
+				t.precinto,
+				t.agencia,
+				t.gastos,
+				t.honorarios,
+				t.minhonorarios,
+				t.mercaderia,
+				t.marca
+				order by t.fecha";
+	
+	$res = $this->query($sql,0);
+	return $res;
+} 
 
 function rptExportacionesDiarias($fecha) {
 	$sql = "select
@@ -745,7 +915,7 @@ function rptExportacionesDiarias($fecha) {
 				                sum(ed.bruto) as bruto,
 				                sum(ed.neto) as neto,
 				                count(ed.idexportaciondetalle) as cantidad,
-				                e.valorunit as valorunitario,
+				                ed.valorunitario as valorunitario,
 				                ag.agencia,
 				                e.gastos,
 				                e.honorarios,
@@ -770,10 +940,10 @@ function rptExportacionesDiarias($fecha) {
 								e.refcolores,e.refdestinos,
 								e.refpuertos,e.tc,
 				                ec.tara,
-				                e.valorunit,
+				                ed.valorunitario,
 				                ec.contenedor,
                                 ec.precinto,
-                                e.agencia,
+                                ag.agencia,
                                 e.gastos,
                                 e.honorarios,
                                 e.minhonorarios
@@ -869,7 +1039,7 @@ function rptExportacionesMensual($anio,$mes) {
 				                sum(ed.bruto) as bruto,
 				                sum(ed.neto) as neto,
 				                count(ed.idexportaciondetalle) as cantidad,
-				                e.valorunit as valorunitario,
+				                ed.valorunitario as valorunitario,
 				                ag.agencia,
 				                e.gastos,
 				                e.honorarios,
@@ -894,7 +1064,7 @@ function rptExportacionesMensual($anio,$mes) {
 								e.refcolores,e.refdestinos,
 								e.refpuertos,e.tc,
 				                ec.tara,
-				                e.valorunit,
+				                ed.valorunitario,
 				                ec.contenedor,
                                 ec.precinto,
                                 ag.agencia,
@@ -935,7 +1105,7 @@ function rptExportacionesMensual($anio,$mes) {
 
 
 function traerExportacionesPorId($id) {
-$sql = "select idexportacion,refclientes,refbuques,refcolores,refdestinos,refpuertos,permisoembarque,booking,despachante,cuit,fecha,factura,tc,valorunit,refagencias, gastos, honorarios, minhonorarios from dbexportaciones where idexportacion =".$id;
+$sql = "select idexportacion,refclientes,refbuques,refcolores,refdestinos,refpuertos,permisoembarque,booking,despachante,cuit,fecha,factura,tc,refagencias, gastos, honorarios, minhonorarios from dbexportaciones where idexportacion =".$id;
 $res = $this->query($sql,0);
 return $res;
 }

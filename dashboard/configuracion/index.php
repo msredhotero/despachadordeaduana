@@ -56,9 +56,7 @@ $refCampo 	=  array();
 
 /////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
 $cabeceras 		= "	<th>Razon Social</th>
-					<th>CUIT</th>
-					<th>Gastos</th>
-					<th>Honorarios</th>";
+					<th>CUIT</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -67,7 +65,7 @@ $cabeceras 		= "	<th>Razon Social</th>
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerConfiguracion(),4);
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerConfiguracion(),2);
 
 
 

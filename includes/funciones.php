@@ -140,18 +140,18 @@ class Servicios {
 				$idresultados = "resultados";
 				break;
 			case 96:
-				$cantidad = 9;
+				$cantidad = 10;
 				$classMod = 'varmodificar';
-				$classEditar = 'vardomicilios';
-				$iconoEditar = 'glyphicon glyphicon-home';
-				$lblEditar	  = 'Domicilio';
+				$classVer = 'vardetalle';
+				$iconoVer = 'glyphicon glyphicon-zoom-in';
+				$lblVer	  = 'Detalle';
 				$classEli = 'varborrar';
-				$classVar1 = 'varbanco';
-				$iconoVar1 = 'glyphicon glyphicon-credit-card';
-				$lblVar1	  = 'Datos Banco';
-				$classVar2 = 'varcargos';
-				$iconoVar2 = 'glyphicon glyphicon-user';
-				$lblVar2	  = 'Cargos';
+				$classVar1 = 'varpdf';
+				$iconoVar1 = 'glyphicon glyphicon-print';
+				$lblVar1	  = 'Imprimir';
+				$classVar2 = 'varemail';
+				$iconoVar2 = 'glyphicon glyphicon-envelope';
+				$lblVar2	  = 'Enviar Email';
 				$idresultados = "resultados";
 				break;
 			case 95:
