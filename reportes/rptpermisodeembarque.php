@@ -128,7 +128,7 @@ $pdf->Output($file,'f');
 
 
 //Para y asunto del mensaje a enviar
-    $email_to = "msredhotero@gmail.com"; 
+    $email_to = "msredhotero@msn.com,msredhotero@gmail.com"; 
     $email_subject = "Email desde cotizador de pagina Web";
 
     //variables para los datos del archivo 
