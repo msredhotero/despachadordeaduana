@@ -199,6 +199,10 @@ case 'traerHonorariosMinimosPorCliente':
 case 'traerDetallePermisoDeEmbarque':
 	traerDetallePermisoDeEmbarque($serviciosReferencias);
 	break;
+
+case 'enviarEmailDePermisos':
+	enviarEmailDePermisos($serviciosReferencias);
+	break;
 /* Fin */
 ////////////////////////////////*****    FIN   *******/////////////////////////////////////
 
@@ -206,12 +210,20 @@ case 'traerDetallePermisoDeEmbarque':
 
 /* Fin */
 
+function enviarEmailDePermisos($serviciosReferencias) {
+	$id = $_POST['id'];
+
+	$res = $serviciosReferencias->enviarEmailDePermisos($id);
+
+	echo $res;
+}
+
 function traerDetallePermisoDeEmbarque($ServiciosReferencias) {
 	$id = $_POST['id'];
 
 	$res = $ServiciosReferencias->rptExportacionesCompletoPorId($id);
 
-	$cad = "<table class='table table-responsive table-striped'>";
+	$cad = "<table class='table table-responsive table-striped' border='1'>";
 	$primero = 0;
 	$contenedor = '';
 
@@ -266,16 +278,23 @@ function traerDetallePermisoDeEmbarque($ServiciosReferencias) {
 
 	$cad .= "<tfoot>
 				<tr>
-					<th colspan='7' style='background-color:#C70039;'>Totales</th>
+					<th colspan='7' style='background-color:#FFC300;text-align: center; font-size:18px;'>Totales</th>
 				</tr>
 				<tr>
-					<th>".$bultos."</th>
-					<th>".($bruto + $tara)." + (Tara)</th>
-					<th>".$neto."</th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th>".$fob."</th>
+					<th style='background-color:#DAF7A6;text-align: center;'>Bultos</th>
+					<th style='background-color:#DAF7A6;text-align: center;'>Brutos</th>
+					<th style='background-color:#DAF7A6;text-align: center;'>Netos</th>
+					<th style='background-color:#DAF7A6;text-align: center;'>Tara</th>
+					<th colspan='2' style='background-color:#DAF7A6;text-align: center;'>Brutos + Tara</th>
+					<th style='background-color:#DAF7A6;text-align: center;'>FOB</th>
+				</tr>
+				<tr>
+					<th style='text-align: right;'>".$bultos."</th>
+					<th style='text-align: right;'>".$bruto."</th>
+					<th style='text-align: right;'>".$neto."</th>
+					<th style='text-align: right;'>".$tara."</th>
+					<th style='text-align: right;' colspan='2'>".($bruto + $tara)."</th>
+					<th style='text-align: right;'>".$fob."</th>
 				</tr>
 			</tfoot>
 			";

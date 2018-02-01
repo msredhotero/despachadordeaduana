@@ -1809,6 +1809,89 @@ return $res;
 /* Fin */
 /* /* Fin de la Tabla: tbagencias*/
 
+
+
+
+/***** email ******************/
+
+function enviarEmail($destinatario,$asunto,$cuerpo) {
+
+
+	# Defina el número de e-mails que desea enviar por periodo. Si es 0, el proceso por lotes
+	# se deshabilita y los mensajes son enviados tan rápido como sea posible.
+	define("MAILQUEUE_BATCH_SIZE",0);
+
+	//para el envío en formato HTML
+	//$headers = "MIME-Version: 1.0\r\n";
+	
+	// Cabecera que especifica que es un HMTL
+	$headers  = 'MIME-Version: 1.0' . "\r\n";
+	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+	
+	//dirección del remitente
+	$headers .= utf8_decode("From: GUSTAVO OMAR AVILA - PROCOMEX <gustavo@procomex.com.ar>\r\n");
+	
+	//ruta del mensaje desde origen a destino
+	$headers .= "Return-path: ".$destinatario."\r\n";
+	
+	//direcciones que recibirán copia oculta
+	$headers .= "Bcc: gustavo@procomex.com.ar\r\n";
+	
+	mail($destinatario,$asunto,$cuerpo,$headers); 	
+}
+
+function enviarEmailDePermisos($id) {
+	$sql = "SELECT DISTINCT
+			    t.email
+			FROM
+			    (SELECT 
+			        ag.email
+			    FROM
+			        tbagencias ag
+			    INNER JOIN dbexportaciones e ON e.refagencias = ag.idagencia
+			    WHERE
+			        e.idexportacion = ".$id." and ag.email <> '' AND ag.email IS NOT NULL
+			            AND ag.email LIKE '%@%' 
+			    UNION ALL SELECT 
+			        email
+			    FROM
+			        dbclientes c
+			    INNER JOIN dbexportaciones e ON e.refclientes = c.idcliente
+			    WHERE
+			        e.idexportacion = ".$id." and c.email <> '' AND c.email IS NOT NULL
+			            AND c.email LIKE '%@%' 
+			    UNION ALL SELECT 
+			        r.email
+			    FROM
+			        tbagencias ag
+			    INNER JOIN dbexportaciones e ON e.refagencias = ag.idagencia
+			    INNER JOIN dbagenciareferentes ar ON ar.refagencias = ag.idagencia
+			    INNER JOIN tbreferentes r ON r.idreferente = ar.refreferentes
+			    WHERE
+			        e.idexportacion = ".$id." and r.email <> '' AND r.email IS NOT NULL
+			            AND r.email LIKE '%@%' 
+			    UNION ALL SELECT 
+			        r.email
+			    FROM
+			        dbclientes c
+			    INNER JOIN dbexportaciones e ON e.refclientes = c.idcliente
+			    INNER JOIN dbclientereferentes cr ON cr.refclientes = c.idcliente
+			    INNER JOIN tbreferentes r ON r.idreferente = cr.refreferentes
+			    WHERE
+			        e.idexportacion = ".$id." and r.email <> '' AND r.email IS NOT NULL
+			            AND r.email LIKE '%@%') t";
+	
+	$res = $this->query($sql,0);
+
+
+}
+
+
+
+/***** fin email **************/
+
+
+
 /* Fin */
 /* /* Fin de la Tabla: tbroles*/
 
