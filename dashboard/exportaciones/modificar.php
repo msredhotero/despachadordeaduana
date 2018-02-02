@@ -140,11 +140,11 @@ $formularioContenedor 	= $serviciosFunciones->camposTabla("insertarExportacionco
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
-	<style type="text/css">
-		
-  
-		
-	</style>
+	
+
+	<script src="../../js/inputmask.js"></script>
+    <script src="../../js/inputmask.date.Extensions.js"></script>
+    <script src="../../js/jquery.inputmask.js"></script>
     
    
    <link href="../../css/perfect-scrollbar.css" rel="stylesheet">
@@ -280,6 +280,8 @@ $formularioContenedor 	= $serviciosFunciones->camposTabla("insertarExportacionco
 
 <script type="text/javascript">
 $(document).ready(function(){
+
+	$("#permisoembarque").inputmask("99999aaaa999999a");
 	
 	function traerGral(id,accion,contenedor,leyenda,valor) {
 		if (id != '') {

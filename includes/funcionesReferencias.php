@@ -621,7 +621,7 @@ function traerExportacionesGrid() {
 	r.booking,
 	r.fecha,
 	r.factura,
-	sum(r.honorariosFinal) as honorariosFinal,
+	(sum(r.honorariosFinal) + r.gastos) as honorariosFinal,
 	sum(r.brutototal) as brutototal,
 	sum(r.fob) as fob,
 	sum(r.fobpesos) as fobpesos
@@ -637,6 +637,7 @@ from (
 		t.booking,
 		t.fecha,
 		t.factura,
+		t.gastos,
         round(sum(t.honorariosFinal),2) as honorariosFinal,
 		round((sum(t.bruto) + t.tara),2) as brutototal,
 		round(sum(t.fob),2) as fob,
@@ -655,6 +656,7 @@ from (
 								e.fecha,
 								e.factura,
                                 ec.tara,
+                                e.gastos,
                                 sum(ed.bruto) as bruto,
                                 sum(ed.neto) * ed.valorunitario as fob,
                                 sum(ed.neto) * ed.valorunitario * e.tc as fobpesos,
@@ -694,6 +696,7 @@ from (
 		t.puerto,
 		t.color,
 		t.booking,
+		t.gastos,
 		t.fecha,
         t.tara,
 		t.factura            
@@ -706,6 +709,7 @@ from (
 	r.destino,
 	r.puerto,
 	r.color,
+	r.gastos,
 	r.booking,
 	r.fecha,
 	r.factura";
@@ -883,7 +887,7 @@ function rptExportacionesCompletoPorId($id) {
 	return $res;
 } 
 
-function rptExportacionesDiarias($fecha) {
+function rptExportacionesDiarias($anio, $mes) {
 	$sql = "select
 				t.idexportacion,
 				t.permisoembarque,
@@ -903,6 +907,135 @@ function rptExportacionesDiarias($fecha) {
 				t.refdestinos,
 				t.refpuertos,
 				t.tc,
+				sum(t.tara) as tara,
+				sum(t.bulto) as bulto,
+				sum(t.bruto) as bruto,
+				sum(t.neto) as neto,
+				sum(t.cantidad) as cantidad,
+				t.valorunitario,
+                t.contenedor,
+				t.precinto,
+				t.agencia,
+				t.marca,
+				t.gastos,
+				t.honorarios,
+				t.minhonorarios
+				from	(
+						select
+								e.idexportacion,
+								e.permisoembarque,
+								cli.razonsocial,
+								buq.nombre as buque,
+								des.destino,
+								pue.puerto,
+								colo.color,
+								e.booking,
+								e.fecha,
+								e.factura,
+								e.despachante,
+								e.cuit,
+								e.refclientes,
+								e.refbuques,
+								e.refcolores,
+								e.refdestinos,
+								e.refpuertos,
+								e.tc,
+				                ec.tara,
+				                ec.contenedor,
+                                ec.precinto,
+                                ed.marca,
+				                sum(ed.bulto) as bulto,
+				                sum(ed.bruto) as bruto,
+				                sum(ed.neto) as neto,
+				                count(ed.idexportaciondetalle) as cantidad,
+				                ed.valorunitario as valorunitario,
+				                ag.agencia,
+				                e.gastos,
+				                e.honorarios,
+				                e.minhonorarios
+							from dbexportaciones e
+				            inner join dbexportacioncontenedores ec ON e.idexportacion = ec.refexportaciones
+				            inner join dbexportaciondetalles ed ON ed.refexportacioncontenedores = ec.idexportacioncontenedor
+							inner join dbclientes cli ON cli.idcliente = e.refclientes
+							inner join tbbuques buq ON buq.idbuque = e.refbuques
+							inner join tbcolores colo ON colo.idcolor = e.refcolores
+							inner join tbdestinos des ON des.iddestino = e.refdestinos
+							inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
+							inner join tbagencias ag ON ag.idagencia = e.refagencias
+				            where year(e.fecha) = ".$anio." and month(e.fecha) = ".$mes."
+				            group by e.idexportacion,e.permisoembarque,
+								cli.razonsocial,buq.nombre,
+								des.destino,pue.puerto,
+								colo.color,	e.booking,
+								e.fecha,e.factura,
+								e.despachante,e.cuit,
+								e.refclientes,e.refbuques,
+								e.refcolores,e.refdestinos,
+								e.refpuertos,e.tc,
+				                ec.tara,
+				                ed.marca,
+				                ed.valorunitario,
+				                ec.contenedor,
+                                ec.precinto,
+                                ag.agencia,
+                                e.gastos,
+                                e.honorarios,
+                                e.minhonorarios
+							) as t
+				            group by t.idexportacion,
+				t.permisoembarque,
+				t.razonsocial,
+				t.buque,
+				t.destino,
+				t.puerto,
+				t.color,
+				t.marca,
+				t.booking,
+				t.fecha,
+				t.factura,
+				t.despachante,
+				t.cuit,
+				t.refclientes,
+				t.refbuques,
+				t.refcolores,
+				t.refdestinos,
+				t.refpuertos,
+				t.tc ,
+				t.valorunitario,
+                t.contenedor,
+				t.precinto,
+				t.agencia,
+				t.gastos,
+				t.honorarios,
+				t.minhonorarios
+				order by t.fecha";
+	
+	$res = $this->query($sql,0);
+	return $res;
+} 
+
+
+function rptExportacionesPorBuqueFechaFacturado($anio, $mes, $idBuque, $facturado) {
+	$sql = "select
+				t.idexportacion,
+				t.permisoembarque,
+				t.razonsocial,
+				t.buque,
+				t.destino,
+				t.puerto,
+				t.color,
+				t.booking,
+				t.fecha,
+				t.factura,
+				t.despachante,
+				t.cuit,
+				t.refclientes,
+				t.refbuques,
+				t.refcolores,
+				t.refdestinos,
+				t.refpuertos,
+				t.tc,
+				t.marca,
 				sum(t.tara) as tara,
 				sum(t.bulto) as bulto,
 				sum(t.bruto) as bruto,
@@ -938,6 +1071,7 @@ function rptExportacionesDiarias($fecha) {
 				                ec.tara,
 				                ec.contenedor,
                                 ec.precinto,
+                                ed.marca,
 				                sum(ed.bulto) as bulto,
 				                sum(ed.bruto) as bruto,
 				                sum(ed.neto) as neto,
@@ -956,7 +1090,7 @@ function rptExportacionesDiarias($fecha) {
 							inner join tbdestinos des ON des.iddestino = e.refdestinos
 							inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
 							inner join tbagencias ag ON ag.idagencia = e.refagencias
-				            where e.fecha = '".$fecha."'
+				            where year(e.fecha) = ".$anio." and month(e.fecha) = ".$mes." and buq.idbuque = ".$idBuque." and (e.factura ".$facturado.")
 				            group by e.idexportacion,e.permisoembarque,
 								cli.razonsocial,buq.nombre,
 								des.destino,pue.puerto,
@@ -972,6 +1106,7 @@ function rptExportacionesDiarias($fecha) {
                                 ec.precinto,
                                 ag.agencia,
                                 e.gastos,
+                                ed.marca,
                                 e.honorarios,
                                 e.minhonorarios
 							) as t
@@ -993,6 +1128,7 @@ function rptExportacionesDiarias($fecha) {
 				t.refdestinos,
 				t.refpuertos,
 				t.tc ,
+				t.marca,
 				t.valorunitario,
                 t.contenedor,
 				t.precinto,

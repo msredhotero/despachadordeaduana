@@ -17,12 +17,21 @@ $serviciosReferancias 		= new ServiciosReferencias();
 
 
 $fecha      =   $_GET['fecha'];
+$idbuque    =   $_GET['buque'];
+$valFacturado = $_GET['facturado'];
+
+$facturado = '= 0 or factura is null';
+if ($valFacturado == 0) {
+    $facturado = '= 0 or factura is null';
+} else {
+    $facturado = '>= 0';
+}
 
 
-$datos = $serviciosReferancias->rptExportacionesDiarias(substr($fecha,0,4),substr($fecha,-2));
+$datos = $serviciosReferancias->rptExportacionesPorBuqueFechaFacturado(substr($fecha,0,4),substr($fecha,-2), $idbuque, $facturado);
 
 // Crea un nuevo objeto PHPExcel
-
+//die(print_r($datos));
 
 $totalGral = 0;
 
@@ -37,7 +46,7 @@ $objPHPExcel->getProperties()
 ->setKeywords("Excel Office 2007 openxml php")
 ->setCategory("Excel");
  
-$tituloReporte = "Total Mensual";
+$tituloReporte = "Total Mensual Por Buque: ";
 $tituloReporte2 = "Fecha: ".$fecha;
 
 $objPHPExcel->setActiveSheetIndex(0)

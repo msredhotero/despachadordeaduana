@@ -681,7 +681,7 @@ function modificarExportaciones($serviciosReferencias) {
 	$tc = $_POST['tc'];
 	$gastos = $_POST['gastos'];
 	$honorarios = $_POST['honorarios'];
-	$honorarios = $_POST['minhonorarios'];
+	$minhonorarios = $_POST['minhonorarios'];
 
 	$res = $serviciosReferencias->modificarExportaciones($id,$refclientes,$refbuques,$refcolores,$refdestinos,$refpuertos,$permisoembarque,$booking,$despachante,$cuit,$fecha,$factura,$tc,$refagencias,$gastos, $honorarios, $minhonorarios);
 

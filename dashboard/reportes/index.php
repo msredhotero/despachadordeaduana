@@ -25,7 +25,8 @@ $fecha = date('Y-m-d');
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reportes",$_SESSION['refroll_predio'],'');
 
-
+$resBuques = $serviciosReferencias->traerBuques();
+$cadBuques = $serviciosFunciones->devolverSelectBox($resBuques,array(1),'');
 
 ?>
 
@@ -59,7 +60,6 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reporte
 	171
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 	<style type="text/css">
 
 		
@@ -88,7 +88,7 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reporte
 
     <div class="boxInfoLargo tile-stats stat-til tile-white">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Reporte Diario</p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Reporte Mes</p>
         	
         </div>
     	<div class="cuerpoBox">
@@ -136,26 +136,45 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reporte
     
     <div class="boxInfoLargo tile-stats stat-til tile-white">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Reporte Mensual</p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Reporte Por Buque</p>
         	
         </div>
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form">
         	<div class="row">
-            	<div class="form-group col-md-4 col-xs-6" style="display:'.$lblOculta.'">
+            	<div class="form-group col-md-4 col-xs-3" style="display:'.$lblOculta.'">
                     <label for="fecha1" class="control-label" style="text-align:left">Seleccione el Mes</label>
                     <div class="input-group col-md-6 col-xs-12">
                     <input class="form-control" type="text" name="fecha2" id="fecha2" value="Date"/>
                     </div>
                 </div>
 
+                <div class="form-group col-md-4 col-xs-3" style="display:'.$lblOculta.'">
+                    <label for="fecha1" class="control-label" style="text-align:left">Seleccione el Buque</label>
+                    <div class="input-group col-md-6 col-xs-12">
+                        <select class="form-control" id="lstbuques" name="lstbuques">
+                            <?php echo $cadBuques; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-4 col-xs-5" style="display:'.$lblOculta.'">
+                    <label for="fecha1" class="control-label" style="text-align:left">Seleccione el Buque</label>
+                    <div class="input-group col-md-6 col-xs-12">
+                        <select class="form-control" id="facturado" name="facturado">
+                            <option value="0">No Facturado</option>
+                            <option value="1">Todo</option>
+                        </select>
+                    </div>
+                </div>
+
                 
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-2">
                     <label class="control-label" style="text-align:left" for="refcliente">Acción</label>
 
                     	<ul class="list-inline">
                         	<li>
-                    			<button type="button" class="btn btn-success" id="rptCajaMensual" style="margin-left:0px;">Generar</button>
+                    			<button type="button" class="btn btn-success" id="rptBuque" style="margin-left:0px;">Generar</button>
                             </li>
                             <!--<li>
                         		<button type="button" class="btn btn-default" id="rptCJExcel" style="margin-left:0px;">Generar Excel</button>
@@ -203,9 +222,9 @@ $(document).ready(function(){
 						
     });
 	
-	$("#rptCajaMensual").click(function(event) {
-        //window.open("../../reportes/rptMensualPorObraExcel.php?fecha=" + $("#fecha2").val() + "&refobras=" + $('#refobras').val() ,'_blank');	
-						
+	$("#rptBuque").click(function(event) {
+        window.open("../../reportes/rptmensualPorBuqueExcel.php?fecha=" + $("#fecha2").val() + "&buque=" + $('#lstbuques').val() + "&facturado=" + $('#facturado').val() ,'_blank'); 
+                        
     });
 	
 
@@ -249,7 +268,7 @@ $('.form_date').datetimepicker({
  $.datepicker.setDefaults($.datepicker.regional['es']);
  
     $( "#fecha1" ).datepicker();
-    $( "#fecha1" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+    $( "#fecha1" ).datepicker( "option", "dateFormat", "yy-mm" );
 	
 	$( "#fecha2" ).datepicker();
     $( "#fecha2" ).datepicker( "option", "dateFormat", "yy-mm" );

@@ -130,11 +130,11 @@ $formularioItem 	= $serviciosFunciones->camposTabla("insertarExportaciondetalles
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
-	<style type="text/css">
-		
-  
-		
-	</style>
+	
+
+	<script src="../../js/inputmask.js"></script>
+    <script src="../../js/inputmask.date.Extensions.js"></script>
+    <script src="../../js/jquery.inputmask.js"></script>
     
    
    <link href="../../css/perfect-scrollbar.css" rel="stylesheet">
@@ -272,7 +272,7 @@ $formularioItem 	= $serviciosFunciones->camposTabla("insertarExportaciondetalles
 <script type="text/javascript">
 $(document).ready(function(){
 	
-
+	$('#contenedor').inputmask("aaaa 999999/9");
 	
 	$('.volver').click(function(event){
 		 

@@ -152,12 +152,15 @@ if ($_SESSION['refroll_predio'] != 1) {
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
 	
-    
+    <script src="../../js/inputmask.js"></script>
+    <script src="../../js/inputmask.date.Extensions.js"></script>
+    <script src="../../js/jquery.inputmask.js"></script>
    
    <link href="../../css/perfect-scrollbar.css" rel="stylesheet">
       <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
       <script src="../../js/jquery.mousewheel.js"></script>
       <script src="../../js/perfect-scrollbar.js"></script>
+      
       <script>
       jQuery(document).ready(function ($) {
         "use strict";
@@ -186,6 +189,7 @@ if ($_SESSION['refroll_predio'] != 1) {
         	<form class="form-inline formulario" role="form">
         	<div class="row">
 			<?php echo $formulario; ?>
+
 			<input type="hidden" name="gastosaux" id="gastosaux">
 			<input type="hidden" name="honorariosaux" id="honorariosaux">
 			<input type="hidden" name="minhonorariosaux" id="minhonorariosaux">
@@ -292,6 +296,8 @@ var idContenedor = 1;
 var idItems = 1;
 $(document).ready(function(){
 	
+	$("#permisoembarque").inputmask("99999aaaa999999a");
+
 
 	$('#colapsarMenu').click();
 
@@ -462,6 +468,10 @@ $(document).ready(function(){
 				}
 			});
 		});
+
+		$('.datacontenedor').each(function(intIndex) {
+			$(this).inputmask("aaaa 999999/9");
+		})
 	});
 
 	$(document).on("click",'.agregarMercaderia', function(){

@@ -56,7 +56,7 @@ $pdf = new FPDF();
 $pdf->AddPage();
 
 $pdf->SetFont('Arial','U',17);
-$pdf->Cell(200,7,'PERMISO DE EMBARQUE',0,0,'C',false);
+$pdf->Cell(200,7,'AUTORIZACION PARA CARGAR MERCADERIAS',0,0,'C',false);
 
 $pdf->SetFont('Arial','',8);
 $pdf->Ln();
@@ -126,9 +126,9 @@ while ($row = mysql_fetch_array($datosDetalles)) {
 		$pdf->SetLineWidth(.3);
 		
 		$pdf->SetFont('Arial','',10);
-		$pdf->Cell(67,5,'CONTENEDOR: '.$row['contenedor'],1,0,'C',true);
+		$pdf->Cell(67,5,'CONTENEDOR: '.strtoupper($row['contenedor']),1,0,'C',true);
 		$pdf->Cell(67,5,'TARA: '.$row['tara'],1,0,'C',true);
-		$pdf->Cell(66,5,'PRECINTO: '.$row['precinto'],1,0,'C',true);
+		$pdf->Cell(66,5,'PRECINTO: '.strtoupper($row['precinto']),1,0,'C',true);
 
 		$pdf->SetTextColor(0);
 
@@ -155,8 +155,8 @@ while ($row = mysql_fetch_array($datosDetalles)) {
 	$pdf->Cell(30,5,$row['bulto'],1,0,'C',false);
 	$pdf->Cell(30,5,$row['bruto'],1,0,'C',false);
 	$pdf->Cell(30,5,$row['neto'],1,0,'C',false);
-	$pdf->Cell(55,5,$row['marca'],1,0,'C',false);
-	$pdf->Cell(55,5,$row['mercaderia'],1,0,'C',false);
+	$pdf->Cell(55,5,strtoupper($row['marca']),1,0,'C',false);
+	$pdf->Cell(55,5,strtoupper($row['mercaderia']),1,0,'C',false);
 
 
 	$bulto += $row['bulto'];
