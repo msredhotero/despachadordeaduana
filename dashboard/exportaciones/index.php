@@ -312,7 +312,7 @@ $(document).ready(function(){
 		});
 	}
 
-
+	
 
 
 	$('#cuit').val('<?php echo $despachadorCUIT; ?>');
@@ -582,6 +582,30 @@ $(document).ready(function(){
 			alert("Error, vuelva a realizar la acción.");	
 		  }
 	});//fin del boton detalle
+
+
+	$("#example").on("click",'.varpdf', function(){
+		  usersid =  $(this).attr("id");
+		  if (!isNaN(usersid)) {
+
+		    window.open("../../reportes/rptpermisodeembarque.php?id=" + usersid ,'_blank');				
+
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton imprmir
+
+
+	$("#example").on("click",'.varemail', function(){
+		  usersid =  $(this).attr("id");
+		  if (!isNaN(usersid)) {
+
+		    window.open("../../reportes/rptpermisodeembarqueadjunto.php?id=" + usersid ,'_blank');				
+
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton enviarporemail
 
 
 	$("#lstContenedores").on("click",'.eliminarContenedor', function(){

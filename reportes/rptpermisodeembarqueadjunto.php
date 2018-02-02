@@ -180,18 +180,25 @@ $pdf->Cell(80,7,'PESO BRUTO CON TARA: '.($bruto + $tara),1,0,'C',false);
 
 $file = "rptPermisoDeEmbarque.pdf";
 
-$pdf->Output($file,'I');
+$pdf->Output($file,'F');
 
 
 
 
 
+$emails = $serviciosReferancias->enviarEmailDePermisos($id);
+
+$lstEmail = '';
+while ($rowE = mysql_fetch_array($emails)) {
+	$lstEmail .= $rowE[0].',';
+}
+
+$lstEmail = substr($lstEmail,0,-1);
 
 
-
-/*
+if ($lstEmail != '') {
 //Para y asunto del mensaje a enviar
-    $email_to = "msredhotero@msn.com,msredhotero@gmail.com"; 
+    $email_to = $lstEmail; 
     $email_subject = "Permiso de Embarque - PROCOMEX";
 
     //variables para los datos del archivo 
@@ -201,7 +208,7 @@ $pdf->Output($file,'I');
     
     $archivo = file_get_contents($archivo);
     $archivo = chunk_split(base64_encode($archivo));
-     */
+     
     
      
 // create email headers
@@ -209,7 +216,7 @@ $pdf->Output($file,'I');
       $headers .= "Content-type: multipart/mixed;";
       $headers .= "boundary=\"=A=G=R=O=\"\r\n";
       $headers .= "From : ".$email_from."\r\n"; */
-    /* 
+    
     function clean_string($string) {
       $bad = array("content-type","bcc:","to:","cc:","href");
       return str_replace($bad,"",$string);
@@ -244,6 +251,10 @@ $pdf->Output($file,'I');
     
     //enviamos el email
     mail($email_to, $email_subject, $email_message, $headers);
-    */
+}
+
+echo '<h2>Se envio el email con el adjunto a los destinatarios: '.$lstEmail.'</h2>';
+
+
 ?>
 

@@ -611,6 +611,22 @@ return $res;
 
 function traerExportacionesGrid() {
 	$sql = "select
+	r.idexportacion,
+	r.permisoembarque,
+	r.razonsocial,
+	r.buque,
+	r.destino,
+	r.puerto,
+	r.color,
+	r.booking,
+	r.fecha,
+	r.factura,
+	sum(r.honorariosFinal) as honorariosFinal,
+	sum(r.brutototal) as brutototal,
+	sum(r.fob) as fob,
+	sum(r.fobpesos) as fobpesos
+from (
+	select
 		t.idexportacion,
 		t.permisoembarque,
 		t.razonsocial,
@@ -681,7 +697,18 @@ function traerExportacionesGrid() {
 		t.fecha,
         t.tara,
 		t.factura            
-				order by t.fecha desc";
+				order by t.fecha desc
+		) r
+        group by r.idexportacion,
+	r.permisoembarque,
+	r.razonsocial,
+	r.buque,
+	r.destino,
+	r.puerto,
+	r.color,
+	r.booking,
+	r.fecha,
+	r.factura";
 			$res = $this->query($sql,0);
 			return $res;
 }
@@ -802,7 +829,7 @@ function rptExportacionesCompletoPorId($id) {
 							inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
 							inner join tbagencias ag ON ag.idagencia = e.refagencias
 							inner join tbmercaderias mer ON mer.idmercaderia = ed.refmercaderias
-				            where e.idexportacion = '".$id."'
+				            where e.idexportacion = ".$id."
 				            group by e.idexportacion,e.permisoembarque,
 								cli.razonsocial,buq.nombre,
 								des.destino,pue.puerto,
@@ -1882,6 +1909,8 @@ function enviarEmailDePermisos($id) {
 			            AND r.email LIKE '%@%') t";
 	
 	$res = $this->query($sql,0);
+
+	return $res;
 
 
 }
