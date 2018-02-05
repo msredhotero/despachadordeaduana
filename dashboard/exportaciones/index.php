@@ -296,7 +296,7 @@ var idContenedor = 1;
 var idItems = 1;
 $(document).ready(function(){
 	
-	$("#permisoembarque").inputmask("99999aaaa999999a");
+	$("#permisoembarque").inputmask("99999aa99999999a");
 
 
 	$('#colapsarMenu').click();
