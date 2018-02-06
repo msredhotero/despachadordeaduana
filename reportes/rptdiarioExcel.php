@@ -93,20 +93,51 @@ $i= 4;
 $subTotal = 0;
 $permiso = '';
 $totalGastos = 0;
+$totalGastosTotales = 0;
+$totalGralFinal = 0; 
+$primero = 0;
+$minHonorarios = 0;
+
 while ($row = mysql_fetch_array($datos)) {
 
     if ($permiso != $row['permisoembarque']) {
+        
+
+        if ($primero == 1) {
+            if ($minHonorarios >= $totalGralFinal) {
+                $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue('V'.$i, 'Gastos:')
+                ->setCellValue('W'.$i, $totalGastos)
+                ->setCellValue('X'.$i, 'Total:')
+                ->setCellValue('Y'.$i, $minHonorarios + $totalGastos);
+            } else {
+                $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue('V'.$i, 'Gastos:')
+                ->setCellValue('W'.$i, $totalGastos)
+                ->setCellValue('X'.$i, 'Total:')
+                ->setCellValue('Y'.$i, $totalGral + $totalGastos);
+            }
+            
+            $totalGastos = 0;
+            $totalGral = 0;
+            $minHonorarios = 0;
+            $i += 1;
+
+        }
+
         $totalGastos += $row['gastos'];
+        $totalGastosTotales += $row['gastos'];
         $permiso = $row['permisoembarque'];
+        $minHonorarios = $row['minhonorarios'];
+        
+        $primero = 1;
+
     }
 
-    if (2500 >= $row['tc'] * $row['neto'] * $row['valorunitario'] * 0.03) {
-        $subTotal = 2500;
-    } else {
-        $subTotal = ($row['tc'] * $row['neto'] * $row['valorunitario'] * 0.03);
-    }
+    $subTotal = $row['tc'] * $row['neto'] * $row['valorunitario'] * $row['honorarios'] / 100;
+    
 
-	$objPHPExcel->setActiveSheetIndex(0)
+    $objPHPExcel->setActiveSheetIndex(0)
     ->setCellValue('A'.$i, strtoupper($row['permisoembarque'])) // Titulo del reporte
     ->setCellValue('B'.$i, strtoupper($row['color']))
     ->setCellValue('C'.$i, $row['fecha'])
@@ -126,24 +157,42 @@ while ($row = mysql_fetch_array($datos)) {
     ->setCellValue('Q'.$i, $row['valorunitario'])
     ->setCellValue('R'.$i, $row['neto'] * $row['valorunitario'])
     ->setCellValue('S'.$i, $row['tc'])
-    ->setCellValue('T'.$i, $row['tc'] * $row['neto'] * $row['valorunitario'])
-    ->setCellValue('U'.$i, '1000')
-    ->setCellValue('V'.$i, '3%')
-    ->setCellValue('W'.$i, $row['tc'] * $row['neto'] * $row['valorunitario'] * 0.03)
+    ->setCellValue('T'.$i, round($row['tc'] * $row['neto'] * $row['valorunitario'],2))
+    ->setCellValue('U'.$i, $row['gastos'])
+    ->setCellValue('V'.$i, $row['honorarios'])
+    ->setCellValue('W'.$i, round($row['tc'] * $row['neto'] * $row['valorunitario'] * ($row['honorarios'] / 100),2))
     ->setCellValue('X'.$i, $row['gastos'])
-    ->setCellValue('Y'.$i, $subTotal)
+    ->setCellValue('Y'.$i, round($subTotal,2))
     ->setCellValue('Z'.$i, $row['factura']);
-	
-	$totalGral += $subTotal; 
+    
+    $totalGral += $subTotal; 
 
-	$i += 1;	
+    $totalGralFinal += $subTotal;
+
+    $i += 1;    
 }
 
+if ($minHonorarios >= $totalGralFinal) {
+    $objPHPExcel->setActiveSheetIndex(0)
+    ->setCellValue('V'.$i, 'Gastos:')
+    ->setCellValue('W'.$i, $totalGastos)
+    ->setCellValue('X'.$i, 'Total:')
+    ->setCellValue('Y'.$i, $minHonorarios + $totalGastos);
+} else {
+    $objPHPExcel->setActiveSheetIndex(0)
+    ->setCellValue('V'.$i, 'Gastos:')
+    ->setCellValue('W'.$i, $totalGastos)
+    ->setCellValue('X'.$i, 'Total:')
+    ->setCellValue('Y'.$i, round($totalGral + $totalGastos,2));
+}
+
+$i += 1;
+
 $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue('V'.$i, 'Gastos:')
-                ->setCellValue('W'.$i, $totalGastos)
-                ->setCellValue('X'.$i, 'Total:')
-                ->setCellValue('Y'.$i, $totalGral + $totalGastos);
+                ->setCellValue('V'.$i, 'Gastos Totales:')
+                ->setCellValue('W'.$i, $totalGastosTotales)
+                ->setCellValue('X'.$i, 'Total Final:')
+                ->setCellValue('Y'.$i, round($totalGastosTotales + $totalGralFinal,2));
 
 
 

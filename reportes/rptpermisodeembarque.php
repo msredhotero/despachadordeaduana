@@ -51,48 +51,48 @@ $datosDetalles = $serviciosReferancias->rptExportacionesCompletoPorId($id);
 $Totales = 0;
 
 
-$pdf = new FPDF();
+$pdf = new FPDF('L','mm','A4');
 
 $pdf->AddPage();
 
 $pdf->SetFont('Arial','U',17);
-$pdf->Cell(200,7,'AUTORIZACION PARA CARGAR MERCADERIAS',0,0,'C',false);
+$pdf->Cell(285,7,'AUTORIZACION PARA CARGAR MERCADERIAS',0,0,'C',false);
 
-$pdf->SetFont('Arial','',8);
+$pdf->SetFont('Arial','',10);
 $pdf->Ln();
 $pdf->SetX(5);
-$pdf->Cell(40,5,'PERMISO DE EMBARQUE:',1,0,'L',false);
-$pdf->Cell(60,5,strtoupper($sim),1,0,'C',false);
-$pdf->Cell(30,5,'CANAL:',1,0,'L',false);
-$pdf->Cell(70,5,strtoupper($color),1,0,'C',false);
-
-$pdf->Ln();
-$pdf->SetX(5);
-$pdf->Cell(40,5,'BUQUE:',1,0,'L',false);
-$pdf->Cell(60,5,strtoupper($buque),1,0,'C',false);
-$pdf->Cell(30,5,'DESPACHANTE:',1,0,'L',false);
-$pdf->Cell(70,5,strtoupper($despachante),1,0,'C',false);
+$pdf->Cell(54,5,'PERMISO DE EMBARQUE:',1,0,'L',false);
+$pdf->Cell(81,5,strtoupper($sim),1,0,'C',false);
+$pdf->Cell(40.5,5,'CANAL:',1,0,'L',false);
+$pdf->Cell(110,5,strtoupper($color),1,0,'C',false);
 
 $pdf->Ln();
 $pdf->SetX(5);
-$pdf->Cell(40,5,'DESTINO:',1,0,'L',false);
-$pdf->Cell(60,5,strtoupper($destino),1,0,'C',false);
-$pdf->Cell(30,5,'CUIT:',1,0,'L',false);
-$pdf->Cell(70,5,strtoupper($cuit),1,0,'C',false);
+$pdf->Cell(54,5,'BUQUE:',1,0,'L',false);
+$pdf->Cell(81,5,strtoupper($buque),1,0,'C',false);
+$pdf->Cell(40.5,5,'DESPACHANTE:',1,0,'L',false);
+$pdf->Cell(110,5,strtoupper($despachante),1,0,'C',false);
 
 $pdf->Ln();
 $pdf->SetX(5);
-$pdf->Cell(40,5,'PUERTO:',1,0,'L',false);
-$pdf->Cell(60,5,strtoupper($puerto),1,0,'C',false);
-$pdf->Cell(30,5,'EXPORTADOR:',1,0,'L',false);
-$pdf->Cell(70,5,strtoupper($cliente),1,0,'C',false);
+$pdf->Cell(54,5,'DESTINO:',1,0,'L',false);
+$pdf->Cell(81,5,strtoupper($destino),1,0,'C',false);
+$pdf->Cell(40.5,5,'CUIT:',1,0,'L',false);
+$pdf->Cell(110,5,strtoupper($cuit),1,0,'C',false);
 
 $pdf->Ln();
 $pdf->SetX(5);
-$pdf->Cell(40,5,'BOOKING:',1,0,'L',false);
-$pdf->Cell(60,5,strtoupper($booking),1,0,'C',false);
-$pdf->Cell(30,5,'CUIT:',1,0,'L',false);
-$pdf->Cell(70,5,strtoupper(mysql_result($resClientes, 0,'cuit')),1,0,'C',false);
+$pdf->Cell(54,5,'PUERTO:',1,0,'L',false);
+$pdf->Cell(81,5,strtoupper($puerto),1,0,'C',false);
+$pdf->Cell(40.5,5,'EXPORTADOR:',1,0,'L',false);
+$pdf->Cell(110,5,strtoupper($cliente),1,0,'C',false);
+
+$pdf->Ln();
+$pdf->SetX(5);
+$pdf->Cell(54,5,'BOOKING:',1,0,'L',false);
+$pdf->Cell(81,5,strtoupper($booking),1,0,'C',false);
+$pdf->Cell(40.5,5,'CUIT:',1,0,'L',false);
+$pdf->Cell(110,5,strtoupper(mysql_result($resClientes, 0,'cuit')),1,0,'C',false);
 
 $pdf->SetFont('Arial','',10);
 
@@ -126,19 +126,19 @@ while ($row = mysql_fetch_array($datosDetalles)) {
 		$pdf->SetLineWidth(.3);
 		
 		$pdf->SetFont('Arial','',10);
-		$pdf->Cell(67,5,'CONTENEDOR: '.strtoupper($row['contenedor']),1,0,'C',true);
-		$pdf->Cell(67,5,'TARA: '.$row['tara'],1,0,'C',true);
-		$pdf->Cell(66,5,'PRECINTO: '.strtoupper($row['precinto']),1,0,'C',true);
+		$pdf->Cell(95,5,'CONTENEDOR: '.strtoupper($row['contenedor']),1,0,'C',true);
+		$pdf->Cell(95,5,'TARA: '.$row['tara'],1,0,'C',true);
+		$pdf->Cell(95,5,'PRECINTO: '.strtoupper($row['precinto']),1,0,'C',true);
 
 		$pdf->SetTextColor(0);
 
 		$pdf->Ln();
 		$pdf->SetX(5);
-		$pdf->Cell(30,5,'BULTO',1,0,'C',false);
-		$pdf->Cell(30,5,'BRUTO',1,0,'C',false);
-		$pdf->Cell(30,5,'NETO',1,0,'C',false);
-		$pdf->Cell(55,5,'MARCA',1,0,'C',false);
-		$pdf->Cell(55,5,'MERCADERIA',1,0,'C',false);
+		$pdf->Cell(42.75,5,'BULTO',1,0,'C',false);
+		$pdf->Cell(42.75,5,'BRUTO',1,0,'C',false);
+		$pdf->Cell(42.75,5,'NETO',1,0,'C',false);
+		$pdf->Cell(78.3,5,'MARCA',1,0,'C',false);
+		$pdf->Cell(78.4,5,'MERCADERIA',1,0,'C',false);
 
 		$contenedor = $row['contenedor'];
 
@@ -152,11 +152,13 @@ while ($row = mysql_fetch_array($datosDetalles)) {
 
 	$pdf->Ln();
 	$pdf->SetX(5);
-	$pdf->Cell(30,5,$row['bulto'],1,0,'C',false);
-	$pdf->Cell(30,5,$row['bruto'],1,0,'C',false);
-	$pdf->Cell(30,5,$row['neto'],1,0,'C',false);
-	$pdf->Cell(55,5,strtoupper($row['marca']),1,0,'C',false);
-	$pdf->Cell(55,5,strtoupper($row['mercaderia']),1,0,'C',false);
+  $pdf->SetFont('Arial','',10);
+	$pdf->Cell(42.75,5,$row['bulto'],1,0,'C',false);
+	$pdf->Cell(42.75,5,$row['bruto'],1,0,'C',false);
+	$pdf->Cell(42.75,5,$row['neto'],1,0,'C',false);
+  $pdf->SetFont('Arial','',9);
+	$pdf->Cell(78.3,5,strtoupper($row['marca']),1,0,'C',false);
+	$pdf->Cell(78.4,5,strtoupper($row['mercaderia']),1,0,'C',false);
 
 
 	$bulto += $row['bulto'];
@@ -170,13 +172,13 @@ $pdf->SetFillColor(166,247,238);
 $pdf->SetFont('Arial','',10);
 $pdf->Ln();
 $pdf->SetX(5);
-$pdf->Cell(200,7,'TOTALES',1,0,'C',true);
+$pdf->Cell(285,7,'TOTALES',1,0,'C',true);
 $pdf->Ln();
 $pdf->SetX(5);
-$pdf->Cell(40,7,'BULTOS: '.$bulto,1,0,'C',false);
-$pdf->Cell(40,7,'BRUTO: '.$bruto,1,0,'C',false);
-$pdf->Cell(40,7,'NETO: '.$neto,1,0,'C',false);
-$pdf->Cell(80,7,'PESO BRUTO CON TARA: '.($bruto + $tara),1,0,'C',false);
+$pdf->Cell(57,7,'BULTOS: '.$bulto,1,0,'C',false);
+$pdf->Cell(57,7,'BRUTO: '.$bruto,1,0,'C',false);
+$pdf->Cell(57,7,'NETO: '.$neto,1,0,'C',false);
+$pdf->Cell(114,7,'PESO BRUTO CON TARA: '.($bruto + $tara),1,0,'C',false);
 
 $file = "rptPermisoDeEmbarque.pdf";
 

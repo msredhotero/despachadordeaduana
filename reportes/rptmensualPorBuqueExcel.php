@@ -166,19 +166,19 @@ while ($row = mysql_fetch_array($datos)) {
     ->setCellValue('Q'.$i, $row['valorunitario'])
     ->setCellValue('R'.$i, $row['neto'] * $row['valorunitario'])
     ->setCellValue('S'.$i, $row['tc'])
-    ->setCellValue('T'.$i, $row['tc'] * $row['neto'] * $row['valorunitario'])
+    ->setCellValue('T'.$i, round($row['tc'] * $row['neto'] * $row['valorunitario'],2))
     ->setCellValue('U'.$i, $row['gastos'])
     ->setCellValue('V'.$i, $row['honorarios'])
-    ->setCellValue('W'.$i, $row['tc'] * $row['neto'] * $row['valorunitario'] * ($row['honorarios'] / 100))
+    ->setCellValue('W'.$i, round($row['tc'] * $row['neto'] * $row['valorunitario'] * ($row['honorarios'] / 100),2))
     ->setCellValue('X'.$i, $row['gastos'])
-    ->setCellValue('Y'.$i, $subTotal)
+    ->setCellValue('Y'.$i, round($subTotal,2))
     ->setCellValue('Z'.$i, $row['factura']);
-	
-	$totalGral += $subTotal; 
+    
+    $totalGral += $subTotal; 
 
     $totalGralFinal += $subTotal;
 
-	$i += 1;	
+    $i += 1;    
 }
 
 if ($minHonorarios >= $totalGralFinal) {
@@ -192,7 +192,7 @@ if ($minHonorarios >= $totalGralFinal) {
     ->setCellValue('V'.$i, 'Gastos:')
     ->setCellValue('W'.$i, $totalGastos)
     ->setCellValue('X'.$i, 'Total:')
-    ->setCellValue('Y'.$i, $totalGral + $totalGastos);
+    ->setCellValue('Y'.$i, round($totalGral + $totalGastos,2));
 }
 
 $i += 1;
@@ -201,7 +201,7 @@ $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue('V'.$i, 'Gastos Totales:')
                 ->setCellValue('W'.$i, $totalGastosTotales)
                 ->setCellValue('X'.$i, 'Total Final:')
-                ->setCellValue('Y'.$i, $totalGastosTotales + $totalGralFinal);
+                ->setCellValue('Y'.$i, round($totalGastosTotales + $totalGralFinal,2));
 
 
 
