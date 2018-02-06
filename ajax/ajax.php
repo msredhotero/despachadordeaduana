@@ -243,7 +243,7 @@ function traerDetallePermisoDeEmbarque($ServiciosReferencias) {
 						<th colspan='3' style='background-color:#FF5733;'>Precinto</th>
 					</tr>
 					<tr>
-						<td colspan='2'>".$row['contenedor']."</td>
+						<td colspan='2'>".strtoupper($row['contenedor'])."</td>
 						<td colspan='2'>".$row['tara']."</td>
 						<td colspan='3'>".$row['precinto']."</td>
 					</tr>
@@ -265,8 +265,8 @@ function traerDetallePermisoDeEmbarque($ServiciosReferencias) {
 					<td>".$row['bulto']."</td>
 					<td>".$row['bruto']."</td>
 					<td>".$row['neto']."</td>
-					<td>".$row['marca']."</td>
-					<td>".$row['mercaderia']."</td>
+					<td>".strtoupper($row['marca'])."</td>
+					<td>".strtoupper($row['mercaderia'])."</td>
 					<td>".$row['valorunitario']."</td>
 					<td>".($row['neto'] * $row['valorunitario'])."</td>
 				</tr>";

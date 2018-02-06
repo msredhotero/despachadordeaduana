@@ -291,6 +291,10 @@ return $res;
 
 
 function eliminarClientes($id) { 
+$sql = "delete from dbclientereferentes where refclientes =".$id; 
+$res = $this->query($sql,0); 
+
+
 $sql = "delete from dbclientes where idcliente =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
