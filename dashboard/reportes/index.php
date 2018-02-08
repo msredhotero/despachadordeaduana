@@ -109,6 +109,9 @@ $cadBuques = $serviciosFunciones->devolverSelectBox($resBuques,array(1),'');
                         	<li>
                     			<button type="button" class="btn btn-success" id="rptCajaDiaria" style="margin-left:0px;">Generar</button>
                             </li>
+                            <li>
+                                <button type="button" class="btn btn-primary" id="rptPermisosNoFacturados" style="margin-left:0px;">Permisos No Facturados</button>
+                            </li>
                             <!--<li>
                         		<button type="button" class="btn btn-default" id="rptCJExcel" style="margin-left:0px;">Generar Excel</button>
                             </li>-->
@@ -226,6 +229,13 @@ $(document).ready(function(){
         window.open("../../reportes/rptmensualPorBuqueExcel.php?fecha=" + $("#fecha2").val() + "&buque=" + $('#lstbuques').val() + "&facturado=" + $('#facturado').val() ,'_blank'); 
                         
     });
+
+    $("#rptPermisosNoFacturados").click(function(event) {
+        window.open("../../reportes/rptPermisosNoFacturados.php" ,'_blank'); 
+                        
+    });
+
+    
 	
 
 });

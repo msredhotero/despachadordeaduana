@@ -1012,7 +1012,7 @@ function rptExportacionesDiarias($anio, $mes) {
 				t.gastos,
 				t.honorarios,
 				t.minhonorarios
-				order by t.fecha";
+				order by t.fecha, t.permisoembarque";
 	
 	$res = $this->query($sql,0);
 	return $res;
@@ -1095,6 +1095,134 @@ function rptExportacionesPorBuqueFechaFacturado($anio, $mes, $idBuque, $facturad
 							inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
 							inner join tbagencias ag ON ag.idagencia = e.refagencias
 				            where year(e.fecha) = ".$anio." and month(e.fecha) = ".$mes." and buq.idbuque = ".$idBuque." and (e.factura ".$facturado.")
+				            group by e.idexportacion,e.permisoembarque,
+								cli.razonsocial,buq.nombre,
+								des.destino,pue.puerto,
+								colo.color,	e.booking,
+								e.fecha,e.factura,
+								e.despachante,e.cuit,
+								e.refclientes,e.refbuques,
+								e.refcolores,e.refdestinos,
+								e.refpuertos,e.tc,
+				                ec.tara,
+				                ed.valorunitario,
+				                ec.contenedor,
+                                ec.precinto,
+                                ag.agencia,
+                                e.gastos,
+                                ed.marca,
+                                e.honorarios,
+                                e.minhonorarios
+							) as t
+				            group by t.idexportacion,
+				t.permisoembarque,
+				t.razonsocial,
+				t.buque,
+				t.destino,
+				t.puerto,
+				t.color,
+				t.booking,
+				t.fecha,
+				t.factura,
+				t.despachante,
+				t.cuit,
+				t.refclientes,
+				t.refbuques,
+				t.refcolores,
+				t.refdestinos,
+				t.refpuertos,
+				t.tc ,
+				t.marca,
+				t.valorunitario,
+                t.contenedor,
+				t.precinto,
+				t.agencia,
+				t.gastos,
+				t.honorarios,
+				t.minhonorarios
+				order by t.fecha";
+	
+	$res = $this->query($sql,0);
+	return $res;
+} 
+
+
+function rptExportacionesNoFacturadas() {
+	$sql = "select
+				t.idexportacion,
+				t.permisoembarque,
+				t.razonsocial,
+				t.buque,
+				t.destino,
+				t.puerto,
+				t.color,
+				t.booking,
+				t.fecha,
+				t.factura,
+				t.despachante,
+				t.cuit,
+				t.refclientes,
+				t.refbuques,
+				t.refcolores,
+				t.refdestinos,
+				t.refpuertos,
+				t.tc,
+				t.marca,
+				sum(t.tara) as tara,
+				sum(t.bulto) as bulto,
+				sum(t.bruto) as bruto,
+				sum(t.neto) as neto,
+				sum(t.cantidad) as cantidad,
+				t.valorunitario,
+                t.contenedor,
+				t.precinto,
+				t.agencia,
+				t.gastos,
+				t.honorarios,
+				t.minhonorarios
+				from	(
+						select
+								e.idexportacion,
+								e.permisoembarque,
+								cli.razonsocial,
+								buq.nombre as buque,
+								des.destino,
+								pue.puerto,
+								colo.color,
+								e.booking,
+								e.fecha,
+								e.factura,
+								e.despachante,
+								e.cuit,
+								e.refclientes,
+								e.refbuques,
+								e.refcolores,
+								e.refdestinos,
+								e.refpuertos,
+								e.tc,
+				                ec.tara,
+				                ec.contenedor,
+                                ec.precinto,
+                                ed.marca,
+				                sum(ed.bulto) as bulto,
+				                sum(ed.bruto) as bruto,
+				                sum(ed.neto) as neto,
+				                count(ed.idexportaciondetalle) as cantidad,
+				                ed.valorunitario as valorunitario,
+				                ag.agencia,
+				                e.gastos,
+				                e.honorarios,
+				                e.minhonorarios
+							from dbexportaciones e
+				            inner join dbexportacioncontenedores ec ON e.idexportacion = ec.refexportaciones
+				            inner join dbexportaciondetalles ed ON ed.refexportacioncontenedores = ec.idexportacioncontenedor
+							inner join dbclientes cli ON cli.idcliente = e.refclientes
+							inner join tbbuques buq ON buq.idbuque = e.refbuques
+							inner join tbcolores colo ON colo.idcolor = e.refcolores
+							inner join tbdestinos des ON des.iddestino = e.refdestinos
+							inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
+							inner join tbagencias ag ON ag.idagencia = e.refagencias
+				            where (e.factura = 0 or e.factura is null)
 				            group by e.idexportacion,e.permisoembarque,
 								cli.razonsocial,buq.nombre,
 								des.destino,pue.puerto,
