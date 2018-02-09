@@ -224,7 +224,9 @@ if ($lstEmail != '') {
       return str_replace($bad,"",$string);
     }
     
-    $CuerpoMensaje = 'Le enviamos este email con el motivo de la generacion de una Permiso de Embarque a traves de PROCOMEX';
+    $CuerpoMensaje = '<h3>Le enviamos este email con el motivo de la generacion de una Permiso de Embarque a traves de PROCOMEX</h3>';
+    $CuerpoMensaje .= '<p>Permiso de Embarque: '.$sim.'</p>';
+    $CuerpoMensaje .= '<p>Buque: '.$buque.'</p>';
      // Cuerpo del Email
       
     

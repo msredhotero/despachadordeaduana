@@ -281,7 +281,7 @@ $formularioContenedor 	= $serviciosFunciones->camposTabla("insertarExportacionco
 <script type="text/javascript">
 $(document).ready(function(){
 
-	$("#permisoembarque").inputmask("99999aaaa999999a");
+	$("#permisoembarque").inputmask("99999aa99999999a");
 	
 	function traerGral(id,accion,contenedor,leyenda,valor) {
 		if (id != '') {

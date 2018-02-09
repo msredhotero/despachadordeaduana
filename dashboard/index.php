@@ -181,7 +181,6 @@ $(document).ready(function(){
 	$('.panel-heading span.clickable').click();
 	
 	$('#example').dataTable({
-		"order": [[ 0, "asc" ]],
 		"language": {
 			"emptyTable":     "No hay datos cargados",
 			"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",

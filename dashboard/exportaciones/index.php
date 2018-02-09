@@ -395,7 +395,6 @@ $(document).ready(function(){
 
 
 	var table = $('#example').dataTable({
-		"order": [[ 0, "asc" ]],
 		"language": {
 			"emptyTable":     "No hay datos cargados",
 			"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
