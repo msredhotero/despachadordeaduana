@@ -17,7 +17,13 @@ $serviciosReferancias 		= new ServiciosReferencias();
 
 
 $fecha      =   $_GET['fecha'];
-$idbuque    =   $_GET['buque'];
+
+if (isset($_GET['buque'])) {
+    $idbuque = $_GET['buque'];
+} else {
+    $idbuque = 0;    
+}
+
 $valFacturado = $_GET['facturado'];
 
 $facturado = '= 0 or factura is null';
@@ -31,7 +37,7 @@ if ($valFacturado == 0) {
 $datos = $serviciosReferancias->rptExportacionesPorBuqueFechaFacturado(substr($fecha,0,4),substr($fecha,-2), $idbuque, $facturado);
 
 // Crea un nuevo objeto PHPExcel
-//die(print_r($datos));
+//die(var_dump($datos));
 
 $totalGral = 0;
 

@@ -1093,9 +1093,15 @@ function rptExportacionesPorBuqueFechaFacturado($anio, $mes, $idBuque, $facturad
 							inner join tbcolores colo ON colo.idcolor = e.refcolores
 							inner join tbdestinos des ON des.iddestino = e.refdestinos
 							inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
-							inner join tbagencias ag ON ag.idagencia = e.refagencias
-				            where year(e.fecha) = ".$anio." and month(e.fecha) = ".$mes." and buq.idbuque = ".$idBuque." and (e.factura ".$facturado.")
-				            group by e.idexportacion,e.permisoembarque,
+							inner join tbagencias ag ON ag.idagencia = e.refagencias";
+		if ($idBuque == 0) {
+			$sql .=	            " where year(e.fecha) = ".$anio." and month(e.fecha) = ".$mes." and (e.factura ".$facturado.")";
+		} else {
+			$sql .=	            " where year(e.fecha) = ".$anio." and month(e.fecha) = ".$mes." and buq.idbuque = ".$idBuque." and (e.factura ".$facturado.")";
+		}
+		
+
+		$sql .=	            " group by e.idexportacion,e.permisoembarque,
 								cli.razonsocial,buq.nombre,
 								des.destino,pue.puerto,
 								colo.color,	e.booking,
