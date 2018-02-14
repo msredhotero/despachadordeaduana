@@ -201,7 +201,7 @@ $lstEmail = substr($lstEmail,0,-1);
 if ($lstEmail != '') {
 //Para y asunto del mensaje a enviar
     $email_to = $lstEmail; 
-    $email_subject = "Permiso de Embarque - PROCOMEX";
+    $email_subject = "Permiso de Embarque ".$sim;
 
     //variables para los datos del archivo 
     $nombrearchivo = $file;

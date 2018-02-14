@@ -2141,6 +2141,38 @@ function enviarEmail($destinatario,$asunto,$cuerpo) {
 	mail($destinatario,$asunto,$cuerpo,$headers); 	
 }
 
+
+
+function enviarEmailPrueba() {
+
+	$destinatario = "danyfuentes@ituzaingowool.com.ar, ffernandez@agencia-martin.com.ar, fillesca@ituzaingowool.com.ar, gmeoqui@agencia-martin.com.ar, gustavo@procomex.com.ar, julian@ituzaingowool.com.ar, plazoleta@appm.com.ar, msredhotero@msn.com";
+
+	$asunto = 'Prueba de Envio de Email - PROCOMEX';
+
+	$cuerpo = '<h4>No responder</h4>';
+	# Defina el número de e-mails que desea enviar por periodo. Si es 0, el proceso por lotes
+	# se deshabilita y los mensajes son enviados tan rápido como sea posible.
+	define("MAILQUEUE_BATCH_SIZE",0);
+
+	//para el envío en formato HTML
+	//$headers = "MIME-Version: 1.0\r\n";
+	
+	// Cabecera que especifica que es un HMTL
+	$headers  = 'MIME-Version: 1.0' . "\r\n";
+	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+	
+	//dirección del remitente
+	$headers .= utf8_decode("From: GUSTAVO OMAR AVILA - PROCOMEX <gustavo@procomex.com.ar>\r\n");
+	
+	//ruta del mensaje desde origen a destino
+	$headers .= "Return-path: ".$destinatario."\r\n";
+	
+	//direcciones que recibirán copia oculta
+	$headers .= "Bcc: gustavo@procomex.com.ar, msredhotero@msn.com\r\n";
+	
+	mail($destinatario,$asunto,$cuerpo,$headers); 	
+}
+
 function enviarEmailDePermisos($id) {
 	$sql = "SELECT DISTINCT
 			    t.email

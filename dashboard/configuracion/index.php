@@ -51,7 +51,7 @@ $refdescripcion = array();
 $refCampo 	=  array();
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-
+//$serviciosReferencias->enviarEmailPrueba();
 
 
 /////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
