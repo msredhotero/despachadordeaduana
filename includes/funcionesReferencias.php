@@ -2398,6 +2398,48 @@ return $res;
 /* Fin */
 /* /* Fin de la Tabla: tbcajadiaria*/
 
+/*
+function enviar_correo($destinatarios, $mail_asunto, $mail_contendio, $from, $from_name, $archivos_adjuntos_ruta,$archivos_adjuntos_temp){
+	$mail= new PHPMailer(); // defaults to using php "mail()"
+	$mail->CharSet = 'UTF-8';
+	$body= $mail_contendio;
+	$mail->IsSMTP(); // telling the protocol to use SMTP
+	$mail->Host = "tu.host.com"; // SMTP server
+	$mail->From = $from;
+	$mail->FromName = $from_name;
+	$mail->Subject = $mail_asunto;
+	$mail->MsgHTML($body);
+	$destinatarios=explode(",", $destinatarios);
+	if(!empty($destinatarios)){
+	foreach($destinatarios as $un_destinatario){
+	$mail->AddAddress($un_destinatario); //destinatarios
+	}
+	}else{
+	return false;
+	}
+	if(!empty($archivos_adjuntos_ruta)){
+	foreach($archivos_adjuntos_ruta as $archivo){
+	$mail->AddAttachment($archivo); // attachment
+	}
+	}
+	if(!empty($archivos_adjuntos_temp)){
+	foreach($archivos_adjuntos_temp as $nombrearchivo=>$contenidoArchivo){
+	$mail->AddStringAttachment($contenidoArchivo,$nombrearch ivo,'base64');
+	}
+	}
+	$mail->Timeout = 20;
+	if($mail->Send()) {
+	return array(true);
+	}else {
+	return array(false,"Mailer Error: ".$mail->ErrorInfo);
+	}
+}
+$archivos_adjuntos_ruta=array($path1,path2);
+$archivos_adjuntos_temp=array(utf8_decode($strfile PDF)=>$strContenidoPdf,utf8_decode($strNomArch)=>$ strContenidoXml);
+enviar_correo(...,array(),archivos_adjuntos_temp);//los archivos estan en variables temporales
+enviar_correo(...,$archivos_adjuntos_ruta,array()) ;//los archivos estan en rutas en disco
+enviar_correo(...,$archivos_adjuntos_ruta,archivos _adjuntos_temp);//ambas opciones al mismo tiempo
+*/
 
 
 function query($sql,$accion) {

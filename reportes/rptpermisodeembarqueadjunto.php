@@ -200,6 +200,7 @@ $lstEmail = substr($lstEmail,0,-1);
 
 if ($lstEmail != '') {
 //Para y asunto del mensaje a enviar
+    /*
     $email_to = $lstEmail; 
     $email_subject = "Permiso de Embarque ".$sim;
 
@@ -210,7 +211,7 @@ if ($lstEmail != '') {
     
     $archivo = file_get_contents($archivo);
     $archivo = chunk_split(base64_encode($archivo));
-     
+     */
     
      
 // create email headers
@@ -219,6 +220,7 @@ if ($lstEmail != '') {
       $headers .= "boundary=\"=A=G=R=O=\"\r\n";
       $headers .= "From : ".$email_from."\r\n"; */
     
+    /*
     function clean_string($string) {
       $bad = array("content-type","bcc:","to:","cc:","href");
       return str_replace($bad,"",$string);
@@ -255,6 +257,18 @@ if ($lstEmail != '') {
     
     //enviamos el email
     mail($email_to, $email_subject, $email_message, $headers);
+    */
+
+    require_once("../PHPMailer/src/PHPMailer.php");
+    $mail = new PHPMailer();
+    $mail->From = "gustavo@procomex.com.ar";
+    $mail->FromName = "Gustavo Avila";
+    $mail->Subject = "Demo de PHPMailer";
+    $mail->Body = "Hola, esto es una demo de envio de emails con archivos adjuntos!!!";
+    $mail->AddAddress('msredhotero@msn.com, msredhotero@gmail.com', "Marcos");
+    $archivo = 'prueba.pdf';
+    $mail->AddAttachment($archivo,$archivo);
+    $mail->Send();
 }
 
 echo '<h2>Se envio el email con el adjunto a los destinatarios: '.$lstEmail.'</h2>';
