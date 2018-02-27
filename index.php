@@ -8,6 +8,8 @@ $serviciosUsuarios = new ServiciosUsuarios();
 $serviciosReferencias = new ServiciosReferencias();
 $servicios = new Servicios();
 
+$serviciosReferencias->enviarEmailPrueba();
+
 ?>
 <!DOCTYPE HTML>
 <html>

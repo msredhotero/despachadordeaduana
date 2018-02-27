@@ -100,18 +100,20 @@ while ($row = mysql_fetch_array($datos)) {
         
 
         if ($primero == 1) {
-            if ($minHonorarios >= $totalGralFinal) {
+            if ($minHonorarios >= $totalGral) {
                 $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue('V'.$i, 'Gastos:')
                 ->setCellValue('W'.$i, $totalGastos)
                 ->setCellValue('X'.$i, 'Total:')
                 ->setCellValue('Y'.$i, $minHonorarios + $totalGastos);
+                $totalGralFinal += $minHonorarios;
             } else {
                 $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue('V'.$i, 'Gastos:')
                 ->setCellValue('W'.$i, $totalGastos)
                 ->setCellValue('X'.$i, 'Total:')
                 ->setCellValue('Y'.$i, $totalGral + $totalGastos);
+                $totalGralFinal += $totalGral;
             }
             
             $totalGastos = 0;
@@ -163,7 +165,6 @@ while ($row = mysql_fetch_array($datos)) {
     
     $totalGral += $subTotal; 
 
-    $totalGralFinal += $subTotal;
 
     $i += 1;    
 }
@@ -174,12 +175,14 @@ if ($minHonorarios >= $totalGralFinal) {
     ->setCellValue('W'.$i, $totalGastos)
     ->setCellValue('X'.$i, 'Total:')
     ->setCellValue('Y'.$i, $minHonorarios + $totalGastos);
+    $totalGralFinal += $minHonorarios;
 } else {
     $objPHPExcel->setActiveSheetIndex(0)
     ->setCellValue('V'.$i, 'Gastos:')
     ->setCellValue('W'.$i, $totalGastos)
     ->setCellValue('X'.$i, 'Total:')
     ->setCellValue('Y'.$i, round($totalGral + $totalGastos,2));
+    $totalGralFinal += $totalGral;
 }
 
 $i += 1;

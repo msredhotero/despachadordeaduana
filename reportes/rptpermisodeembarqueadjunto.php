@@ -226,7 +226,7 @@ if ($lstEmail != '') {
       return str_replace($bad,"",$string);
     }
     
-    $CuerpoMensaje = '<h3>Le enviamos este email con el motivo de la generacion de una Permiso de Embarque a traves de PROCOMEX</h3>';
+    $CuerpoMensaje = '<p>Le enviamos este email con el motivo de la generacion de una Permiso de Embarque a traves de PROCOMEX</p><br>';
     $CuerpoMensaje .= '<p>Permiso de Embarque: '.$sim.'</p>';
     $CuerpoMensaje .= '<p>Buque: '.$buque.'</p>';
      // Cuerpo del Email
@@ -241,7 +241,7 @@ if ($lstEmail != '') {
     
     //armando mensaje del email
     $email_message = "--=A=G=R=O=\r\n";
-    $email_message .= "Content-type:text/plain; charset=utf-8\r\n";
+    $email_message .= "Content-type:text/html; charset=utf-8\r\n";
     $email_message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
     $email_message .= $CuerpoMensaje . "\r\n\r\n";
     

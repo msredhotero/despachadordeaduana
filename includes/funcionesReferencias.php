@@ -625,7 +625,10 @@ function traerExportacionesGrid() {
 	r.booking,
 	r.fecha,
 	r.factura,
-	(sum(r.honorariosFinal) + r.gastos) as honorariosFinal,
+	(case when sum(r.honorariosFinal) <= r.minhonorarios 
+		then r.minhonorarios + r.gastos
+        else
+		(sum(r.honorariosFinal) + r.gastos) end) as honorariosFinal,
 	sum(r.brutototal) as brutototal,
 	sum(r.fob) as fob,
 	sum(r.fobpesos) as fobpesos
@@ -642,6 +645,7 @@ from (
 		t.fecha,
 		t.factura,
 		t.gastos,
+        t.minhonorarios,
         round(sum(t.honorariosFinal),2) as honorariosFinal,
 		round((sum(t.bruto) + t.tara),2) as brutototal,
 		round(sum(t.fob),2) as fob,
@@ -664,6 +668,7 @@ from (
                                 sum(ed.bruto) as bruto,
                                 sum(ed.neto) * ed.valorunitario as fob,
                                 sum(ed.neto) * ed.valorunitario * e.tc as fobpesos,
+                                e.minhonorarios,
                                 (case when sum(ed.neto) * ed.valorunitario * e.tc <= e.minhonorarios 
 									then e.minhonorarios + e.gastos
                                     else (sum(ed.neto) * ed.valorunitario * e.tc) * e.honorarios / 100 end) as honorariosFinal
@@ -703,6 +708,7 @@ from (
 		t.gastos,
 		t.fecha,
         t.tara,
+        t.minhonorarios,
 		t.factura            
 				order by t.fecha desc
 		) r
@@ -2145,7 +2151,7 @@ function enviarEmail($destinatario,$asunto,$cuerpo) {
 
 function enviarEmailPrueba() {
 
-	$destinatario = "danyfuentes@ituzaingowool.com.ar, ffernandez@agencia-martin.com.ar, fillesca@ituzaingowool.com.ar, gmeoqui@agencia-martin.com.ar, gustavo@procomex.com.ar, julian@ituzaingowool.com.ar, plazoleta@appm.com.ar, msredhotero@msn.com";
+	$destinatario = "msredhotero@msn.com, msredhotero@gmail.com";
 
 	$asunto = 'Prueba de Envio de Email - PROCOMEX';
 
