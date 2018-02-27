@@ -259,7 +259,12 @@ if ($lstEmail != '') {
     mail($email_to, $email_subject, $email_message, $headers);
     */
 
-    require_once("../PHPMailer/src/PHPMailer.php");
+    //require_once("../PHPMailer/src/PHPMailer.php");
+    //require '../PHPMailer/src/Exception.php';
+    //require '../PHPMailer/src/PHPMailer.php';
+    require("class.phpmailer.php");
+    //require '../PHPMailer/src/SMTP.php';
+    //use PHPMailer\PHPMailer\PHPMailer;
     $mail = new PHPMailer();
     $mail->From = "gustavo@procomex.com.ar";
     $mail->FromName = "Gustavo Avila";
