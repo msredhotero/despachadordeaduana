@@ -283,8 +283,8 @@ if ($lstEmail != '') {
     $mail->IsSMTP();
     $mail->SMTPAuth = true;
     $mail->Host = "smtp.procomex.com.ar"; // SMTP a utilizar. Por ej. smtp.elserver.com
-    $mail->Username = "gustavo@procomex.com.ar"; /* Correo completo a utilizar*/
-    $mail->Password = ""; /* Contraseña */
+    $mail->Username = "marcos@procomex.com.ar"; /* Correo completo a utilizar*/
+    $mail->Password = "RHcp7575"; /* Contraseña */
     $mail->Port = 25; // Puerto a utilizar
 
     //Con estas pocas líneas iniciamos una conexión con el SMTP. Lo que ahora deberíamos hacer, es configurar el mensaje a enviar, el //From, etc.
