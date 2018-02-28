@@ -199,120 +199,10 @@ $lstEmail = substr($lstEmail,0,-1);
 
 
 if ($lstEmail != '') {
-//Para y asunto del mensaje a enviar
-    /*
-    $email_to = $lstEmail; 
-    $email_subject = "Permiso de Embarque ".$sim;
 
-    //variables para los datos del archivo 
-    $nombrearchivo = $file;
-    $archivo = $file;
-    // Leemos el archivo a adjuntar
-    
-    $archivo = file_get_contents($archivo);
-    $archivo = chunk_split(base64_encode($archivo));
-     */
-    
-     
-// create email headers
-      /*$headers = "MIME-Version: 1.0\r\n";
-      $headers .= "Content-type: multipart/mixed;";
-      $headers .= "boundary=\"=A=G=R=O=\"\r\n";
-      $headers .= "From : ".$email_from."\r\n"; */
-    
-    /*
-    function clean_string($string) {
-      $bad = array("content-type","bcc:","to:","cc:","href");
-      return str_replace($bad,"",$string);
-    }
-    
-    $CuerpoMensaje = '<p>Le enviamos este email con el motivo de la generacion de una Permiso de Embarque a traves de PROCOMEX</p><br>';
-    $CuerpoMensaje .= '<p>Permiso de Embarque: '.$sim.'</p>';
-    $CuerpoMensaje .= '<p>Buque: '.$buque.'</p>';
-     // Cuerpo del Email
-      
-    
-     //cabecera del email (forma correcta de codificarla)
-    $headers = "From: PROCOMEX - Gustavo Omar Avila <gustavo@procomex.com.ar>\r\n";
-    //$header .= "Reply-To: " . $replyto . "\r\n";
-    $headers .= "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: multipart/mixed; boundary=\"=A=G=R=O=\"\r\n\r\n";
-    
-    
-    //armando mensaje del email
-    $email_message = "--=A=G=R=O=\r\n";
-    $email_message .= "Content-type:text/html; charset=utf-8\r\n";
-    $email_message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-    $email_message .= $CuerpoMensaje . "\r\n\r\n";
-    
-    //archivo adjunto  para email    
-    $email_message .= "--=A=G=R=O=\r\n";
-    $email_message .= "Content-Type: application/octet-stream; name=\"" . $nombrearchivo . "\"\r\n";
-    $email_message .= "Content-Transfer-Encoding: base64\r\n";
-    $email_message .= "Content-Disposition: attachment; filename=\"" . $nombrearchivo . "\"\r\n\r\n";
-    $email_message .= $archivo . "\r\n\r\n";
-    $email_message .= "--=A=G=R=O=--";
-    
-    
-    
-    //enviamos el email
-    mail($email_to, $email_subject, $email_message, $headers);
-    */
-
-    //use PHPMailer\PHPMailer\PHPMailer;
-//use PHPMailer\PHPMailer\Exception;
-    //require "../PHPMailer/src/PHPMailer.php";
     include_once('class.phpmailer.php');
     include_once('class.smtp.php');
-    //require '../PHPMailer/src/Exception.php';
-    //require_once('../PHPMailer/src/PHPMailer.php');
-    //require("class.phpmailer.php");
-    //require '../PHPMailer/src/SMTP.php';
-    //use PHPMailer\PHPMailer\PHPMailer;
-    /*
-    $mail = new PHPMailer();
-    $mail->From = "gustavo@procomex.com.ar";
-    $mail->FromName = "Gustavo Avila";
-    $mail->Subject = "Demo de PHPMailer";
-    $mail->Body = "Hola, esto es una demo de envio de emails con archivos adjuntos!!!";
-    $mail->AddAddress('msredhotero@msn.com, msredhotero@gmail.com', "Marcos");
-    $archivo = 'prueba.pdf';
-    $mail->AddAttachment($archivo,$archivo);
-    $mail->Send();
-    */
 
-    //$mail = new PHPMailer();
-
-//Luego tenemos que iniciar la validación por SMTP:
-    
-    //$mail->IsSMTP();
-    //$mail->SMTPAuth = true;
-    //$mail->Host = "smtp.procomex.com.ar"; // SMTP a utilizar. Por ej. smtp.elserver.com
-    
-    //$mail->Username = "marcos@procomex.com.ar"; /* Correo completo a utilizar*/
-    
-    //$mail->Password = "RHcp7575"; /* Contraseña */
-    //$mail->Port = 25; // Puerto a utilizar
-
-    //Con estas pocas líneas iniciamos una conexión con el SMTP. Lo que ahora deberíamos hacer, es configurar el mensaje a enviar, el //From, etc.
-    /*
-    $mail->From = "marcos@procomex.com.ar"; // Desde donde enviamos (Para mostrar)
-    $mail->FromName = "Gustavo";
-
-    //Estas dos líneas, cumplirían la función de encabezado (En mail() usado de esta forma: “From: Nombre <correo@dominio.com>”) de //correo.
-    $mail->AddAddress("msredhotero@gmail.com"); // Esta es la dirección a donde enviamos
-    $mail->IsHTML(true); // El correo se envía como HTML
-    $mail->Subject = "Titulo"; // Este es el titulo del email.
-    $body = "Hola mundo. Esta es la primer línea<br />";
-    $body .= "Acá continuo el <strong>mensaje</strong>";
-    $mail->Body = $body; // Mensaje a enviar
-    $exito = $mail->Send(); // Envía el correo.
-    if($exito){
-    echo 'El correo fue enviado correctamente.';
-    }else{
-    echo 'Hubo un inconveniente. Contacta a un administrador.';
-    }
-    */
 
 
     //Recibir todos los parámetros del formulario
@@ -324,14 +214,19 @@ if ($lstEmail != '') {
     //Este bloque es importante
     $mail = new PHPMailer();
     $mail->IsSMTP();
-    $mail->SMTPAuth = false;
+    $mail->SMTPAuth = true;
+    $mail->CharSet = "utf-8";
+    $mail->IsHTML(true);
+    $mail->AddReplyTo("noreply@site.com", "Do not reply");
     //$mail->SMTPSecure = "ssl";
-    $mail->Host = "smtp.gmail.com.ar";
-    $mail->Port = 465;
+    $mail->Host = "mail.procomex.com.ar";
+    $mail->Port = 25;
 
     //Nuestra cuenta
     $mail->Username ='marcos@procomex.com.ar';
     $mail->Password = 'RHcp7575';
+    //$mail->SMTPSecure = 'tls';
+    //$mail->SMTPDebug  = 1;
 
     //Agregar destinatario
     $mail->AddAddress($para);
@@ -342,6 +237,8 @@ if ($lstEmail != '') {
     $mail->MsgHTML($mensaje);
 
     //Avisar si fue enviado o no y dirigir al index
+    //$mail->Send();
+    
     if($mail->Send())
     {
       echo'<script type="text/javascript">
@@ -354,6 +251,9 @@ if ($lstEmail != '') {
 
          </script>';
     }
+    
+    $mail->ClearAddresses();
+    $mail->ClearAttachments();
 }
 
 echo '<h2>Se envio el email con el adjunto a los destinatarios: '.$lstEmail.'</h2>';
