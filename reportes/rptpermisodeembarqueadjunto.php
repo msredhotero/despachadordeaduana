@@ -259,10 +259,14 @@ if ($lstEmail != '') {
     mail($email_to, $email_subject, $email_message, $headers);
     */
 
-    //require_once("../PHPMailer/src/PHPMailer.php");
+    //use PHPMailer\PHPMailer\PHPMailer;
+//use PHPMailer\PHPMailer\Exception;
+    //require "../PHPMailer/src/PHPMailer.php";
+    include_once('class.phpmailer.php');
+    include_once('class.smtp.php');
     //require '../PHPMailer/src/Exception.php';
-    //require '../PHPMailer/src/PHPMailer.php';
-    require("class.phpmailer.php");
+    //require_once('../PHPMailer/src/PHPMailer.php');
+    //require("class.phpmailer.php");
     //require '../PHPMailer/src/SMTP.php';
     //use PHPMailer\PHPMailer\PHPMailer;
     /*
@@ -277,17 +281,21 @@ if ($lstEmail != '') {
     $mail->Send();
     */
 
-    $mail = new PHPMailer();
+    //$mail = new PHPMailer();
 
 //Luego tenemos que iniciar la validación por SMTP:
-    $mail->IsSMTP();
-    $mail->SMTPAuth = true;
-    $mail->Host = "smtp.procomex.com.ar"; // SMTP a utilizar. Por ej. smtp.elserver.com
-    $mail->Username = "marcos@procomex.com.ar"; /* Correo completo a utilizar*/
-    $mail->Password = "RHcp7575"; /* Contraseña */
-    $mail->Port = 25; // Puerto a utilizar
+    
+    //$mail->IsSMTP();
+    //$mail->SMTPAuth = true;
+    //$mail->Host = "smtp.procomex.com.ar"; // SMTP a utilizar. Por ej. smtp.elserver.com
+    
+    //$mail->Username = "marcos@procomex.com.ar"; /* Correo completo a utilizar*/
+    
+    //$mail->Password = "RHcp7575"; /* Contraseña */
+    //$mail->Port = 25; // Puerto a utilizar
 
     //Con estas pocas líneas iniciamos una conexión con el SMTP. Lo que ahora deberíamos hacer, es configurar el mensaje a enviar, el //From, etc.
+    /*
     $mail->From = "marcos@procomex.com.ar"; // Desde donde enviamos (Para mostrar)
     $mail->FromName = "Gustavo";
 
@@ -303,6 +311,49 @@ if ($lstEmail != '') {
     echo 'El correo fue enviado correctamente.';
     }else{
     echo 'Hubo un inconveniente. Contacta a un administrador.';
+    }
+    */
+
+
+    //Recibir todos los parámetros del formulario
+    $para = 'msredhotero@gmail.com';
+    $asunto = 'Prueba';
+    $mensaje = 'Prueba 2';
+    $archivo = '';
+
+    //Este bloque es importante
+    $mail = new PHPMailer();
+    $mail->IsSMTP();
+    $mail->SMTPAuth = true;
+    $mail->SMTPSecure = "ssl";
+    $mail->Host = "smtp.procomex.com.ar";
+    $mail->Port = 465;
+
+    //Nuestra cuenta
+    $mail->Username ='marcos@procomex.com.ar';
+    $mail->Password = 'RHcp7575';
+
+    //Agregar destinatario
+    $mail->AddAddress($para);
+    $mail->Subject = $asunto;
+    $mail->Body = $mensaje;
+    //Para adjuntar archivo
+    //$mail->AddAttachment($archivo['tmp_name'], $archivo['name']);
+    $mail->MsgHTML($mensaje);
+
+    //Avisar si fue enviado o no y dirigir al index
+    if($mail->Send())
+    {
+      echo'<script type="text/javascript">
+          alert("Enviado Correctamente");
+          window.location="http://localhost/maillocal/index.php"
+         </script>';
+    }
+    else{
+      echo'<script type="text/javascript">
+          alert("NO ENVIADO, intentar de nuevo");
+          window.location="http://localhost/maillocal/index.php"
+         </script>';
     }
 }
 
