@@ -324,9 +324,9 @@ if ($lstEmail != '') {
     //Este bloque es importante
     $mail = new PHPMailer();
     $mail->IsSMTP();
-    $mail->SMTPAuth = true;
-    $mail->SMTPSecure = "ssl";
-    $mail->Host = "smtp.procomex.com.ar";
+    $mail->SMTPAuth = false;
+    //$mail->SMTPSecure = "ssl";
+    $mail->Host = "smtp.gmail.com.ar";
     $mail->Port = 465;
 
     //Nuestra cuenta
@@ -346,13 +346,12 @@ if ($lstEmail != '') {
     {
       echo'<script type="text/javascript">
           alert("Enviado Correctamente");
-          window.location="http://localhost/maillocal/index.php"
          </script>';
     }
     else{
       echo'<script type="text/javascript">
           alert("NO ENVIADO, intentar de nuevo");
-          window.location="http://localhost/maillocal/index.php"
+
          </script>';
     }
 }
