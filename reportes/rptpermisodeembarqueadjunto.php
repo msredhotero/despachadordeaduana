@@ -299,6 +299,11 @@ if ($lstEmail != '') {
     $body .= "Acá continuo el <strong>mensaje</strong>";
     $mail->Body = $body; // Mensaje a enviar
     $exito = $mail->Send(); // Envía el correo.
+    if($exito){
+    echo 'El correo fue enviado correctamente.';
+    }else{
+    echo 'Hubo un inconveniente. Contacta a un administrador.';
+    }
 }
 
 echo '<h2>Se envio el email con el adjunto a los destinatarios: '.$lstEmail.'</h2>';
