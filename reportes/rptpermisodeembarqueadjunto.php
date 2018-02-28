@@ -294,7 +294,7 @@ if ($lstEmail != '') {
     //Estas dos líneas, cumplirían la función de encabezado (En mail() usado de esta forma: “From: Nombre <correo@dominio.com>”) de //correo.
     $mail->AddAddress("msredhotero@msn.com"); // Esta es la dirección a donde enviamos
     $mail->IsHTML(true); // El correo se envía como HTML
-    $mail->Subject = “Titulo”; // Este es el titulo del email.
+    $mail->Subject = "Titulo"; // Este es el titulo del email.
     $body = "Hola mundo. Esta es la primer línea<br />";
     $body .= "Acá continuo el <strong>mensaje</strong>";
     $mail->Body = $body; // Mensaje a enviar
