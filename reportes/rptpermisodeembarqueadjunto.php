@@ -288,11 +288,11 @@ if ($lstEmail != '') {
     $mail->Port = 25; // Puerto a utilizar
 
     //Con estas pocas líneas iniciamos una conexión con el SMTP. Lo que ahora deberíamos hacer, es configurar el mensaje a enviar, el //From, etc.
-    $mail->From = "gustavo@procomex.com.ar"; // Desde donde enviamos (Para mostrar)
+    $mail->From = "marcos@procomex.com.ar"; // Desde donde enviamos (Para mostrar)
     $mail->FromName = "Gustavo";
 
     //Estas dos líneas, cumplirían la función de encabezado (En mail() usado de esta forma: “From: Nombre <correo@dominio.com>”) de //correo.
-    $mail->AddAddress("msredhotero@msn.com"); // Esta es la dirección a donde enviamos
+    $mail->AddAddress("msredhotero@gmail.com"); // Esta es la dirección a donde enviamos
     $mail->IsHTML(true); // El correo se envía como HTML
     $mail->Subject = "Titulo"; // Este es el titulo del email.
     $body = "Hola mundo. Esta es la primer línea<br />";
