@@ -609,7 +609,7 @@ $(document).ready(function(){
 		  usersid =  $(this).attr("id");
 		  if (!isNaN(usersid)) {
 
-		    window.open("../../reportes/rptpermisodeembarqueadjunto.php?id=" + usersid ,'_blank');				
+		    window.open("../../phpmailer/index.php?id=" + usersid ,'_blank');				
 
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	
