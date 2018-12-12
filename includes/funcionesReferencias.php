@@ -14,7 +14,14 @@ function calculoBasePorExportacion($idPedidoEmbarque) {
 }
 
 
+function cargarFacturasMasivas($nrofactura, $permisos) {
+	$sql = "update dbexportaciones 
+				set factura = '".$nrofactura."', fechamodi = '".date('Y-m-d')."' 
+			where idexportacion in (".$permisos.")";
 
+	$res =	$this->query($sql, 0);
+	return $res;
+}
 
 
 function GUID()
@@ -613,8 +620,126 @@ $res = $this->query($sql,0);
 return $res;
 }
 
+
 function traerExportacionesGrid() {
 	$sql = "select
+	r.idexportacion,
+	r.permisoembarque,
+	r.razonsocial,
+	r.buque,
+	r.destino,
+	r.puerto,
+	r.color,
+	r.booking,
+	r.fecha,
+	r.factura,
+	(case when sum(r.honorariosFinal) <= r.minhonorarios 
+		then r.minhonorarios + r.gastos
+        else
+		(sum(r.honorariosFinal) + r.gastos) end) as honorariosFinal,
+	sum(r.brutototal) as brutototal,
+	sum(r.fob) as fob,
+	sum(r.fobpesos) as fobpesos
+from (
+	select
+		t.idexportacion,
+		t.permisoembarque,
+		t.razonsocial,
+		t.buque,
+		t.destino,
+		t.puerto,
+		t.color,
+		t.booking,
+		t.fecha,
+		t.factura,
+		t.gastos,
+        t.minhonorarios,
+        round(sum(t.honorariosFinal),2) as honorariosFinal,
+		round((sum(t.bruto) + t.tara),2) as brutototal,
+		round(sum(t.fob),2) as fob,
+		round(sum(t.fobpesos),2) as fobpesos
+		
+				from	(
+						select
+								e.idexportacion,
+								e.permisoembarque,
+								cli.razonsocial,
+								buq.nombre as buque,
+								des.destino,
+								pue.puerto,
+								colo.color,
+								e.booking,
+								e.fecha,
+								e.factura,
+                                ec.tara,
+                                e.gastos,
+                                sum(ed.bruto) as bruto,
+                                sum(ed.neto) * ed.valorunitario as fob,
+                                sum(ed.neto) * ed.valorunitario * e.tc as fobpesos,
+                                e.minhonorarios,
+                                (case when sum(ed.neto) * ed.valorunitario * e.tc <= e.minhonorarios 
+									then e.minhonorarios + e.gastos
+                                    else (sum(ed.neto) * ed.valorunitario * e.tc) * e.honorarios / 100 end) as honorariosFinal
+							from dbexportaciones e
+				            inner join dbexportacioncontenedores ec ON e.idexportacion = ec.refexportaciones
+				            inner join dbexportaciondetalles ed ON ed.refexportacioncontenedores = ec.idexportacioncontenedor
+							inner join dbclientes cli ON cli.idcliente = e.refclientes
+							inner join tbbuques buq ON buq.idbuque = e.refbuques
+							inner join tbcolores colo ON colo.idcolor = e.refcolores
+							inner join tbdestinos des ON des.iddestino = e.refdestinos
+							inner join tbpuertos pue ON pue.idpuerto = e.refpuertos
+							inner join tbagencias ag ON ag.idagencia = e.refagencias
+				            group by e.idexportacion,
+								e.permisoembarque,
+								cli.razonsocial,
+								buq.nombre,
+								des.destino,
+								pue.puerto,
+								colo.color,
+								e.booking,
+								e.fecha,
+								e.factura,
+                                ed.valorunitario,
+                                e.minhonorarios,
+                                e.gastos,
+                                ec.tara,
+                                e.honorarios
+							) as t
+				group by t.idexportacion,
+		t.permisoembarque,
+		t.razonsocial,
+		t.buque,
+		t.destino,
+		t.puerto,
+		t.color,
+		t.booking,
+		t.gastos,
+		t.fecha,
+        t.tara,
+        t.minhonorarios,
+		t.factura            
+				order by t.fecha desc
+		) r
+        group by r.idexportacion,
+	r.permisoembarque,
+	r.razonsocial,
+	r.buque,
+	r.destino,
+	r.puerto,
+	r.color,
+	r.gastos,
+	r.booking,
+	r.fecha,
+	r.factura";
+			$res = $this->query($sql,0);
+			return $res;
+}
+
+
+
+function traerExportacionesGridNuevo() {
+	$sql = "select
+	r.idexportacion,
 	r.idexportacion,
 	r.permisoembarque,
 	r.razonsocial,

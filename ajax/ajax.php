@@ -35,6 +35,10 @@ switch ($accion) {
 		recuperar($serviciosUsuarios);
 		break;
 
+	case 'cargarFacturasMasivas':
+		cargarFacturasMasivas($serviciosReferencias);
+		break;
+
 
 /* PARA Roles */
 
@@ -209,6 +213,20 @@ case 'enviarEmailDePermisos':
 }
 
 /* Fin */
+
+function cargarFacturasMasivas($serviciosReferencias) {
+	$nrofactura = $_POST['nrofactura'];
+	$permisos = $_POST['permisos'];
+
+	if ($permisos != '') {
+		$res = $serviciosReferencias->cargarFacturasMasivas($nrofactura, $permisos);
+
+		echo '';
+	} else {
+		echo 'Debe seleccionar un Permiso para cargarle la factura';
+	}
+	
+}
 
 function enviarEmailDePermisos($serviciosReferencias) {
 	$id = $_POST['id'];
